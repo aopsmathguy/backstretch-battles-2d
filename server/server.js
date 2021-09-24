@@ -30,4 +30,6 @@ io.on('connection', client => {
     cars[client.id] = new Car();
   }
 });
+// console.log("agadg");
+
 io.listen(process.env.PORT || 3000);
