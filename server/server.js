@@ -27,6 +27,7 @@ io.on('connection', client => {
   client.on('joinGame', handleJoinGame);
   function handleJoinGame(){
     controls[client.id] = new UserControls();
+    cars[client.id] = new Car();
   }
 });
 io.listen(process.env.PORT || 3000);

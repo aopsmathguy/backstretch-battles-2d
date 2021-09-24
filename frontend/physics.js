@@ -23,7 +23,7 @@ var HashGrid = class{
 }
 var Physics = {};
 Physics.World = class{
-  scale = 10;
+  scale = 20;
   gridSize = 10;
 
   staticBodies;
@@ -37,15 +37,13 @@ Physics.World = class{
   constructor(){
     this.staticBodies = {};
     this.staticIdx = 0;
-    
+
     this.dynamicBodies = {};
     this.dynamicIdx = 0;
 
     this.staticBodiesRegions = new HashGrid();
     this.dynamicBodiesRegions = new HashGrid();
-  }
-  
-  dimensionsInMeters(){
+  }dimensionsInMeters(){
     return (new Vector(innerWidth, innerHeight)).multiply(1/this.scale);
   }
   transform(ctx, func){
@@ -54,7 +52,7 @@ Physics.World = class{
     func();
     ctx.restore();
   }
-  display(ctx, min, max){
+  displayRect(ctx, min, max){
     ctx.lineWidth = 0.1;
     ctx.strokeStyle = "#000";
     ctx.fillStyle = "rgba(255,255,255,0)";
@@ -88,6 +86,19 @@ Physics.World = class{
       }
     }
   }
+  display(ctx){
+    ctx.lineWidth = 0.1;
+    ctx.strokeStyle = "#fff";
+    ctx.fillStyle = "rgba(255,255,255,0)";
+    for (var i in this.staticBodies){
+      var body = this.staticBodies[i];
+      body.display(ctx);
+    }
+    for (var i in this.dynamicBodies){
+      var body = this.dynamicBodies[i];
+      body.display(ctx);
+    }
+  }
   solvePosition(A,B,rA,rB, n, dlength){
     var normCombinedInvMass = 1/A.mass + 1/B.mass + n.cross(rA)**2/A.inertia + n.cross(rB)**2/B.inertia;
     var massMove = (dlength)/normCombinedInvMass;
@@ -98,12 +109,14 @@ Physics.World = class{
   solveVelocity(A,B,rA,rB, n, dvel){
     var normCombinedInvMass = 1/A.mass + 1/B.mass + n.cross(rA)**2/A.inertia + n.cross(rB)**2/B.inertia;
     var inertia = (dvel)/normCombinedInvMass;
-    A.applyImpulse(n.multiply(inertia), rA);
-    B.applyImpulse(n.multiply(-inertia), rB);
     return inertia;
   }
+  applyImpulses(A,B, rA, rB, imp){
+    A.applyImpulse(imp, rA);
+    B.applyImpulse(imp.multiply(-1), rB);
+  }
   intersect(A, B){
-    var slop = 0.01;
+    var slop = 0.03;
     var percent = 1;
 
     var APoly = A.generateShape();
@@ -148,26 +161,28 @@ Physics.World = class{
     }
 //     var p1 = edgeBody.position.add(rEdge);
 //     var p2 = vertBody.position.add(rVert);
-    
+
     // debugLine(edgeBody.position, p1);
     // debugLine(vertBody.position, p2);
     // debugDot(p1);
     // debugDot(p2);
-    
+
     var elasticity = Physics.combinedElasticity(edgeBody.elasticity, vertBody.elasticity);
     var dvel = -(1 + elasticity) * normRel;
-    
+
     var imp = this.solveVelocity(edgeBody,vertBody,rEdge,rVert,normal, dvel);
+    this.applyImpulses(edgeBody, vertBody, rEdge, rVert, normal.multiply(imp));
 
     var tangent = rel.subtract(normal.multiply(rel.dot(normal))).normalize();
-    var jt =  tangent.dot(rel);
+    var relVelAlongTangent =  tangent.dot(rel);
     var mu = Physics.combinedFrictionCoef(edgeBody.sFriction, vertBody.sFriction)
     var fricImp;
-    if (Math.abs(jt) > imp * mu){
+    var tImp = this.solveVelocity(edgeBody,vertBody,rEdge,rVert,tangent, -relVelAlongTangent);
+    if (Math.abs(tImp) > - imp * mu){
       var dmu = Physics.combinedFrictionCoef(edgeBody.kFriction, vertBody.kFriction);
-      jt = imp * dmu;
+      tImp = imp * dmu;
     }
-    this.solveVelocity(edgeBody,vertBody,rEdge,rVert,tangent, jt);
+    this.applyImpulses(edgeBody, vertBody, rEdge, rVert, tangent.multiply(tImp));
     return true;
   }
   updateDynamicHashGrid(){
@@ -218,7 +233,7 @@ Physics.World = class{
     for (var i in this.dynamicBodies){
       this.dynamicBodies[i].integrate(t);
     }
-    
+
     var moved = new Set();
     this.updateDynamicHashGrid();
     for (var i in this.dynamicBodies){
@@ -466,7 +481,7 @@ Physics.CircleBody = class extends Physics.Body{
     ctx.save();
     ctx.translate(this.position.x,this.position.y);
     ctx.rotate(this.angle);
-    
+
     ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
     ctx.closePath();

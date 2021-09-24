@@ -47,7 +47,7 @@ function frameStep(){
     var min = centered.subtract(world.dimensionsInMeters().multiply(0.5));
     var max = centered.add  (world.dimensionsInMeters().multiply(0.5));
 
-    world.display(ctx, min, max);
+    world.displayRect(ctx, min, max);
     for (var i in cars){
       var c = cars[i];
       c.display(ctx);

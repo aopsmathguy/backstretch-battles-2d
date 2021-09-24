@@ -237,7 +237,7 @@ Car.Config = class{
       new Vector(-2.2,-0.8),
       new Vector(-2.2,0.8)
     ];
-    this.mass = opts.mass || 1.2;//1000 kg
+    this.mass = opts.mass || 1200;//1000 kg
     this.inertiaScale = opts.inertiaScale || 1.87;
 
     this.maxSteer = opts.maxSteer || 0.5;
@@ -252,12 +252,12 @@ Car.Config = class{
 
     this.cornerStiffnessFront = opts.cornerStiffnessFront || 5.0;
     this.cornerStiffnessBack = opts.cornerStiffnessBack || 5.2;
-    this.enginePower = opts.enginePower || 300;// watts
+    this.enginePower = opts.enginePower || 300000;// watts
 
-    this.brakeForce = opts.brakeForce || 12;// newtons
+    this.brakeForce = opts.brakeForce || 12000;// newtons
     this.ebrakeForce = opts.ebrakeForce || this.brakeForce / 2.5;
 
-    this.dragCoefficient = opts.dragCoefficient || 0.0004257;
-    this.rollingResistance = opts.rollingResistance || 0.0128;
+    this.dragCoefficient = opts.dragCoefficient || 0.4257;
+    this.rollingResistance = opts.rollingResistance || 12.8;
   }
 }
