@@ -12,10 +12,10 @@ var startGame = function(){
   }
   for (var i = 0; i < 100000; i++){
     var x = 5 * i;
-    var boundary = new Physics.RectBody(10,1, Infinity, 0.2,0.3,0.3);
+    var boundary = new Physics.RectBody(10,1, Infinity, 0.2,0.3,0.4);
     boundary.position = new Vector(x, 20);
     world.addBody(boundary);
-    boundary = new Physics.RectBody(10,1, Infinity, 0.2,0.3,0.3);
+    boundary = new Physics.RectBody(10,1, Infinity, 0.2,0.3,0.4);
     boundary.position = new Vector(x, 0);
     world.addBody(boundary);
   }
@@ -45,7 +45,7 @@ function frameStep(){
     var translate = centered.subtract(world.dimensionsInMeters().multiply(0.5));
     ctx.translate(-translate.x, -translate.y);
     var min = centered.subtract(world.dimensionsInMeters().multiply(0.5));
-    var max = centered.add  (world.dimensionsInMeters().multiply(0.5));
+    var max = centered.add(world.dimensionsInMeters().multiply(0.5));
 
     world.displayRect(ctx, min, max);
     for (var i in cars){
