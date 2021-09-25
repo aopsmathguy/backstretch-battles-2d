@@ -10,7 +10,7 @@ var Car = class {
   netWheelForce;
   constructor(cfg){
     this.cfg = cfg || new Car.Config();
-    this.body = new Physics.PolyBody(this.cfg.points, this.cfg.mass,  this.cfg.mass * this.cfg.inertiaScale, 0.14, 0.2, 0.2);
+    this.body = new Physics.PolyBody({points : this.cfg.points, mass : this.cfg.mass, inertia : this.cfg.mass * this.cfg.inertiaScale, kFriction : 0.14, sFriction : 0.2, elasticity : 0.2});
     this.gas = true;
     this.brake = false;
     this.eBrake = false;

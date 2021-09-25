@@ -12,11 +12,13 @@ var startGame = function(){
   }
   for (var i = 0; i < 100000; i++){
     var x = 5 * i;
-    var boundary = new Physics.RectBody(10,1, Infinity, 0.2,0.3,0.4);
-    boundary.position = new Vector(x, 20);
+    var boundary = new Physics.RectBody({
+      length: 10, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 20)
+    });
     world.addBody(boundary);
-    boundary = new Physics.RectBody(10,1, Infinity, 0.2,0.3,0.4);
-    boundary.position = new Vector(x, 0);
+    boundary = new Physics.RectBody({
+      length: 10, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 0)
+    });
     world.addBody(boundary);
   }
   // world.step(0.001);

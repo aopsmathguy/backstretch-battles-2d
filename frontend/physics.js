@@ -286,20 +286,21 @@ Physics.Body = class{
   angle;
   _angleVelocity;
   angleVelocity;
-  constructor(mass, inertia, kFriction, sFriction, elasticity){
-    this.mass = mass;
-    this.inertia = inertia;
-    this.kFriction = kFriction;
-    this.sFriction = sFriction;
-    this.elasticity = elasticity;
+  constructor(opts){
+    opts = opts || {};
+    this.mass = opts.mass || 1;
+    this.inertia = opts.inertia || 1;
+    this.kFriction = opts.kFriction || 0.1;
+    this.sFriction = opts.sFriction || 0.2;
+    this.elasticity = opts.elasticity || 0.3;
 
-    this.position = new Vector(30,10);
-    this.velocity = new Vector(0,0);
-    this._velocity = new Vector(0,0);
+    this.position = opts.position || new Vector(0,0);
+    this.velocity = opts.velocity || new Vector(0,0);
+    this._velocity = this.velocity;
 
-    this.angle = 0;
-    this.angleVelocity = 0;
-    this._angleVelocity = 0;
+    this.angle = opts.angle || 0;
+    this.angleVelocity =  opts.angleVelocity || 0;
+    this._angleVelocity = this.angleVelocity;
   }
   getVelocity(r){
     return this.velocity.add(r.rCrossZ(this.angleVelocity));
@@ -473,9 +474,10 @@ Physics.Polygon = class {
 };
 Physics.CircleBody = class extends Physics.Body{
   radius;
-  constructor(radius, mass, kFriction, sFriction, elasticity){
-    super(mass, 0.5 * mass * radius ** 2, kFriction, sFriction, elasticity);
-    this.radius = radius;
+  constructor(opts){
+    super(opts);
+    opts = opts || {};
+    this.radius = opts.radius || 1;
   }
   display(ctx){
     ctx.save();
@@ -506,9 +508,15 @@ Physics.CircleBody = class extends Physics.Body{
 };
 Physics.PolyBody = class extends Physics.Body{
   points;
-  constructor(points, mass, inertia, kFriction, sFriction, elasticity){
-    super(mass, inertia, kFriction, sFriction, elasticity);
-    this.points = points;
+  constructor(opts){
+    super(opts);
+    opts = opts || {};
+    this.points = opts.points || [
+      new Vector(1,1),
+      new Vector(1,-1),
+      new Vector(-1,-1),
+      new Vector(-1,1)
+    ];
   }
   display(ctx){
     ctx.save();
@@ -540,13 +548,18 @@ Physics.PolyBody = class extends Physics.Body{
   }
 };
 Physics.RectBody = class extends Physics.PolyBody{
-  constructor(l, w, mass, kFriction, sFriction, elasticity){
-    super([
-      new Vector(l/2, w/2),
-      new Vector(l/2, -w/2),
-      new Vector(-l/2, -w/2),
-      new Vector(-l/2, w/2)
-    ], mass, 1/12 * mass * (l**2 + w**2), kFriction, sFriction, elasticity);
+  constructor(opts){
+    super(opts);
+    opts = opts || {};
+    this.width = opts.width || 2;
+    this.length = opts.length || 2;
+    this.points = [
+      new Vector(this.length/2, this.width/2),
+      new Vector(this.length/2, -this.width/2),
+      new Vector(-this.length/2, -this.width/2),
+      new Vector(-this.length/2, this.width/2)
+    ];
+    this.inertia = 1/12 * this.mass * (this.length**2 + this.width**2);
   }
 };
 Physics.combinedElasticity = function(e1, e2){
