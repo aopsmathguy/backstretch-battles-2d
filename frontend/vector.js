@@ -102,6 +102,9 @@ var Vector = class {
   copy() {
     return new Vector(this.x, this.y);
   }
+  lerp(v, f){
+    return new Vector(this.x + v.x * f, this.y + v.y * f);
+  }
   static copy(opts){
     opts = opts || {};
     return new Vector(opts.x || 0, opts.y || 0);

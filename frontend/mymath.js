@@ -1,4 +1,4 @@
-MyMath = {};
+var MyMath = {};
 MyMath.clamp = function(a, min, max){
   return Math.min(max, Math.max(min, a));
 }
@@ -15,4 +15,7 @@ MyMath.sign = function(a){
 // or -pi to pi radians
 MyMath.anglify = function(ang){
   return ((ang) % (2 * Math.PI) + 3 * Math.PI ) % (2 * Math.PI) - Math.PI;
+}
+MyMath.lerp = function(p, v, f){
+  return p + v * f;
 }

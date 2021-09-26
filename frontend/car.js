@@ -53,13 +53,15 @@ var Car = class {
     steerFraction = MyMath.clamp(steerFraction, -1, 1);
     this.steerAngle = maxSteer * steerFraction;
   }
-  display(ctx){
+  display(ctx, dt){
+    dt = dt || 0;
     var cfg = this.cfg;
     var body = this.body;
     ctx.lineWidth = 0.1;
     ctx.save();
-    ctx.translate(body.position.x,body.position.y);
-    ctx.rotate(body.angle);
+    var s = body.lerpedState(dt);
+    ctx.translate(s.position.x,s.position.y);
+    ctx.rotate(s.angle);
 
     ctx.beginPath();
     for (var i = 0; i < body.points.length; i++){
@@ -127,13 +129,14 @@ var Car = class {
 
     ctx.restore();
   }
-  displayDirection(ctx){
+  displayDirection(ctx, dt){
     var cfg = this.cfg;
     var body = this.body;
     ctx.lineWidth = 0.1;
     ctx.save();
-    ctx.translate(body.position.x,body.position.y);
-    ctx.rotate(body.angle);
+    var s = body.lerpedState(dt);
+    ctx.translate(s.position.x,s.position.y);
+    ctx.rotate(s.angle);
     var length = 6;
     ctx.setLineDash([0.5, 0.5]);
     if (Math.abs(this.steerAngle) < 0.001){

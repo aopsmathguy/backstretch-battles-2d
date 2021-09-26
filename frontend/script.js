@@ -3,6 +3,7 @@ const socket = io('http://localhost:3000', { transports : ['websocket'] });
 socket.on('startState', onStartState);
 socket.on('gameState', onGameState);
 socket.on('join', onJoin);
+socket.on('pong', onPong);
 
 var canvas = $e("canvas");
 var ctx = canvas.getContext("2d");
@@ -10,6 +11,12 @@ var world;
 var staticBodies;
 var cars;
 var myId;
+var dt;
+
+var lastRecieve;
+var physicsTime;
+var timeDiff = 0;
+var ping = 0;
 function startGame(){
   world = new Physics.World();
   staticBodies = [];
@@ -31,12 +38,17 @@ function onStartState(e){
   for (var i in cars){
     world.addBody(cars[i].body);
   }
+  dt = e.dt;
+  setInterval(()=>{
+    socket.emit("ping", Date.now());
+  }, 5000);
   frameStep();
 }
 function onGameState(e){
+  physicsTime = e.time;
   for (var i in cars){
     var c = cars[i];
-    var o = e[i];
+    var o = e.cars[i];
     c.gas = o.gas;
     c.brake = o.brake;
     c.eBrake = o.eBrake;
@@ -56,25 +68,48 @@ function onJoin(e){
   cars[id] = new Car(e.car);
   world.addBody(cars[id].body);
 }
+function onPong(e){
+  var t = Date.now();
+  ping = t - e.cTime;
+  var equivCTime = (t + e.cTime)/2;
+  timeDiff = equivCTime - e.sTime;
+}
 function frameStep(){
   requestAnimationFrame(frameStep);
+
+  var sDispTime = Date.now() - timeDiff - ping/2;
+  while (physicsTime < sDispTime){
+    step(dt);
+    physicsTime += dt*1000;
+  }
+
   clearCanvas();
-  var centered = cars[myId].body.position;
+  display((sDispTime - physicsTime)/1000);
+}
+function display(dt){
+  var state = cars[myId].body.lerpedState(dt);
   world.transform(ctx, ()=> {
     ctx.save();
-    var translate = centered.subtract(world.dimensionsInMeters().multiply(0.5));
+    var translate = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
     ctx.translate(-translate.x, -translate.y);
-    var min = centered.subtract(world.dimensionsInMeters().multiply(0.5));
-    var max = centered.add(world.dimensionsInMeters().multiply(0.5));
+    var min = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
+    var max = state.position.add(world.dimensionsInMeters().multiply(0.5));
 
-    world.displayRect(ctx, min, max);
+    world.displayRect(ctx, min, max, dt);
     for (var i in cars){
       var c = cars[i];
-      c.display(ctx);
+      c.display(ctx, dt);
     }
-    cars[myId].displayDirection(ctx);
+    cars[myId].displayDirection(ctx, dt);
     ctx.restore();
   });
+}
+function step(dt){
+  cars[myId].updateInputs(controls, dt);
+  for (var i in cars){
+    cars[i].step(dt);
+  }
+  world.step(dt);
 }
 function clearCanvas(){
   canvas.width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
