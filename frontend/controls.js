@@ -7,11 +7,13 @@ var controls = {
     window.addEventListener('keydown', function(e) {
       if (!controls.keys[e.key]) {
         controls.keys[e.key] = true;
+        socket.emit('keydown', e.key);
       }
     });
     window.addEventListener('keyup', function(e) {
       if (controls.keys[e.key]) {
         controls.keys[e.key] = false;
+        socket.emit('keyup', e.key);
       }
     });
     const rect = canvas.getBoundingClientRect();

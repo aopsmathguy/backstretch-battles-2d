@@ -1,5 +1,4 @@
 var gravity = 10;
-//mass is scaled down by 1000 times for engine stability reasons
 var Car = class {
   cfg;
   body;
@@ -8,15 +7,20 @@ var Car = class {
   eBrake;
   steerAngle;
   netWheelForce;
-  constructor(cfg){
-    this.cfg = cfg || new Car.Config();
-    this.body = new Physics.PolyBody({points : this.cfg.points, mass : this.cfg.mass, inertia : this.cfg.mass * this.cfg.inertiaScale, kFriction : 0.14, sFriction : 0.2, elasticity : 0.2});
-    this.gas = true;
-    this.brake = false;
-    this.eBrake = false;
-    this.steerAngle = 0;
-    this.safeSteer = true;
-    this.netWheelForce = new Vector(0,0);
+  constructor(opts){
+    opts = opts || {};
+    this.cfg = new Car.Config(opts.cfg);
+    if (opts.body != undefined){
+      this.body = Physics.Body.generateBody(opts.body);
+    } else{
+      this.body = new Physics.PolyBody({points : this.cfg.points, mass : this.cfg.mass, inertia : this.cfg.mass * this.cfg.inertiaScale, kFriction : 0.14, sFriction : 0.2, elasticity : 0.2});
+    }
+    this.gas = (opts.gas != undefined ? opts.gas : false);
+    this.brake = (opts.brake != undefined ? opts.brake : false);
+    this.eBrake = (opts.eBrake != undefined ? opts.eBrake : false);
+    this.steerAngle = (opts.steerAngle != undefined ? opts.steerAngle : 0);
+    this.safeSteer = (opts.safeSteer != undefined ? opts.safeSteer : true);
+    this.netWheelForce = Vector.copy(opts.netWheelForce);
   }
   updateInputs(controls, dt){
     var cfg = this.cfg;

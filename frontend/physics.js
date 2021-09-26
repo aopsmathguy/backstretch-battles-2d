@@ -1,3 +1,30 @@
+var TwoWayMap = class{
+    constructor() {
+       this.map = new Map();
+       this.reverseMap = new Map();
+    }
+    getValue(key) { return this.map.get(key); }
+    getKey(v) { return this.reverseMap.get(v); }
+    add(k, v){
+      this.map.set(k, v);
+      this.reverseMap.set(v, k);
+    }
+    removeKey(k){
+      var v = this.getValue(k);
+      this.map.delete(k);
+      this.reverseMap.delete(v);
+      return v;
+    }
+    removeValue(v){
+      var k = this.getKey(v);
+      this.reverseMap.delete(v);
+      this.map.delete(k);
+      return k;
+    }
+    forEach(func){
+      this.map.forEach(func);
+    }
+}
 var HashGrid = class{
   obj;
   constructor(){
@@ -12,9 +39,16 @@ var HashGrid = class{
   add(x, y, elem){
     var hash = this.key(x,y);
     if (!this.obj[hash]){
-      this.obj[hash] = [];
+      this.obj[hash] = new Set();
     }
-    this.obj[hash].push(elem);
+    this.obj[hash].add(elem);
+  }
+  remove(x, y, elem){
+    var hash = this.key(x,y);
+    if (!this.obj[hash]){
+      return;
+    }
+    this.obj[hash].delete(elem);
   }
   get(x,y){
     var hash = this.key(x,y);
@@ -35,15 +69,16 @@ Physics.World = class{
   staticBodiesRegions;
   dynamicBodiesRegions;
   constructor(){
-    this.staticBodies = {};
+    this.staticBodies = new TwoWayMap();
     this.staticIdx = 0;
 
-    this.dynamicBodies = {};
+    this.dynamicBodies = new TwoWayMap();
     this.dynamicIdx = 0;
 
     this.staticBodiesRegions = new HashGrid();
     this.dynamicBodiesRegions = new HashGrid();
-  }dimensionsInMeters(){
+  }
+  dimensionsInMeters(){
     return (new Vector(innerWidth, innerHeight)).multiply(1/this.scale);
   }
   transform(ctx, func){
@@ -65,13 +100,13 @@ Physics.World = class{
         if (list == undefined){
           continue;
         }
-        for (var i = 0; i < list.length; i++){
-          idxSet.add(list[i]);
-        }
+        list.forEach((item) => {
+          idxSet.add(item);
+        });
       }
     }
     idxSet.forEach((i) =>{
-      this.staticBodies[i].display(ctx);
+      this.staticBodies.getValue(i).display(ctx);
     });
     this.updateDynamicHashGrid();
     for (var xGrid = minGrid.x - 1; xGrid <= maxGrid.x + 1; xGrid++){
@@ -80,9 +115,9 @@ Physics.World = class{
         if (list == undefined){
           continue;
         }
-        for (var i = 0; i < list.length; i++){
-          this.dynamicBodies[list[i]].display(ctx);
-        }
+        list.forEach((item) => {
+          this.dynamicBodies.getValue(item).display(ctx);
+        });
       }
     }
   }
@@ -90,14 +125,12 @@ Physics.World = class{
     ctx.lineWidth = 0.1;
     ctx.strokeStyle = "#fff";
     ctx.fillStyle = "rgba(255,255,255,0)";
-    for (var i in this.staticBodies){
-      var body = this.staticBodies[i];
+    this.staticBodies.forEach((body, i) => {
       body.display(ctx);
-    }
-    for (var i in this.dynamicBodies){
-      var body = this.dynamicBodies[i];
+    });
+    this.dynamicBodies.forEach((body, i) => {
       body.display(ctx);
-    }
+    });
   }
   solvePosition(A,B,rA,rB, n, dlength){
     var normCombinedInvMass = 1/A.mass + 1/B.mass + n.cross(rA)**2/A.inertia + n.cross(rB)**2/B.inertia;
@@ -187,11 +220,10 @@ Physics.World = class{
   }
   updateDynamicHashGrid(){
     this.dynamicBodiesRegions.clear();
-    for (var idx in this.dynamicBodies){
-      var body = this.dynamicBodies[idx];
+    this.dynamicBodies.forEach((body, idx) => {
       var center = this.getGrid(body.position);
       this.dynamicBodiesRegions.add(center.x, center.y, idx);
-    }
+    });
   }
   getGrid(pos){
     return pos.multiply(1/this.gridSize).floor();
@@ -199,7 +231,7 @@ Physics.World = class{
   addBody(b){
     if (b.mass == Infinity){
       var idx = this.staticIdx++;
-      this.staticBodies[idx] = b;
+      this.staticBodies.add(idx, b);
       var poly = b.generateShape();
       var minG = this.getGrid(poly.min);
       var maxG = this.getGrid(poly.max);
@@ -208,8 +240,25 @@ Physics.World = class{
           this.staticBodiesRegions.add(x, y, idx);
         }
       }
-    } else{
-      this.dynamicBodies[this.dynamicIdx++] = b;
+    }
+    else{
+      this.dynamicBodies.add(this.dynamicIdx++, b);
+    }
+  }
+  removeBody(b){
+    if (b.mass == Infinity){
+      var idx = this.staticBodies.removeValue(b);
+      var poly = b.generateShape();
+      var minG = this.getGrid(poly.min);
+      var maxG = this.getGrid(poly.max);
+      for (var x = minG.x - 2; x <= maxG.x + 2; x++){
+        for (var y = minG.y - 2; y <= maxG.y + 2; y++){
+          this.staticBodiesRegions.remove(x, y, idx);
+        }
+      }
+    }
+    else{
+      this.dynamicBodies.removeValue(b);
     }
   }
   getDynamicIntersects(body){
@@ -218,9 +267,12 @@ Physics.World = class{
     for (var x = grid.x - 1; x <= grid.x + 1; x++){
       for (var y = grid.y - 1; y <= grid.y + 1; y++){
         var toAdd = this.dynamicBodiesRegions.get(x, y);
-        for (var j in toAdd){
-          s.add(toAdd[j]);
+        if (toAdd == undefined){
+          continue;
         }
+        toAdd.forEach((item) => {
+          s.add(item);
+        });
       }
     }
     return Array.from(s);
@@ -230,28 +282,28 @@ Physics.World = class{
     return this.staticBodiesRegions.get(grid.x, grid.y);
   }
   step(t){
-    for (var i in this.dynamicBodies){
-      this.dynamicBodies[i].integrate(t);
-    }
+    this.dynamicBodies.forEach((body, i) => {
+      body.integrate(t);
+    });
 
     var moved = new Set();
     this.updateDynamicHashGrid();
-    for (var i in this.dynamicBodies){
+    this.dynamicBodies.forEach((body, i) => {
       moved.add(i);
-    }
+    });
     var count = 0;
     while(moved.size > 0){
-//     for (var k = 0; k < 100; k++){
+    // for (var k = 0; k < 1; k++){
       var newMoved = new Set();
-      moved.forEach((i)=>{
-        var body = this.dynamicBodies[i];
+      moved.forEach((i) => {
+        var body = this.dynamicBodies.getValue(i);
         var dynamicInt = this.getDynamicIntersects(body);
         for (var j in dynamicInt){
           var idx = dynamicInt[j];
           if (i == idx){
             continue;
           }
-          var oBody = this.dynamicBodies[idx];
+          var oBody = this.dynamicBodies.getValue(idx);
           var m = this.intersect(body, oBody);
           if (m){
             newMoved.add(i);
@@ -259,13 +311,17 @@ Physics.World = class{
           }
         }
         var staticInt = this.getStaticIntersects(body);
-        for (var j in staticInt){
-          var oBody = this.staticBodies[staticInt[j]];
+        if (staticInt == undefined){
+          return;
+        }
+        staticInt.forEach((j) => {
+          var oBody = this.staticBodies.getValue(j);
           var m = this.intersect(body, oBody);
           if (m){
             newMoved.add(i);
           }
-        }
+        });
+
       });
       moved = newMoved;
       count++;
@@ -288,19 +344,27 @@ Physics.Body = class{
   angleVelocity;
   constructor(opts){
     opts = opts || {};
-    this.mass = opts.mass || 1;
-    this.inertia = opts.inertia || 1;
+    this.mass = opts.mass || Infinity;
+    this.inertia = opts.inertia || Infinity;
     this.kFriction = opts.kFriction || 0.1;
     this.sFriction = opts.sFriction || 0.2;
     this.elasticity = opts.elasticity || 0.3;
 
-    this.position = opts.position || new Vector(0,0);
-    this.velocity = opts.velocity || new Vector(0,0);
+    this.position = Vector.copy(opts.position) || new Vector(0,0);
+    this.velocity = Vector.copy(opts.velocity) || new Vector(0,0);
     this._velocity = this.velocity;
 
     this.angle = opts.angle || 0;
     this.angleVelocity =  opts.angleVelocity || 0;
     this._angleVelocity = this.angleVelocity;
+  }
+  static generateBody(opts){
+    if (opts.bodyType == "c"){
+      return new Physics.CircleBody(opts);
+    }
+    else if (opts.bodyType == "p"){
+      return new Physics.PolyBody(opts);
+    }
   }
   getVelocity(r){
     return this.velocity.add(r.rCrossZ(this.angleVelocity));
@@ -473,6 +537,7 @@ Physics.Polygon = class {
   }
 };
 Physics.CircleBody = class extends Physics.Body{
+  bodyType = "c";
   radius;
   constructor(opts){
     super(opts);
@@ -507,16 +572,24 @@ Physics.CircleBody = class extends Physics.Body{
   }
 };
 Physics.PolyBody = class extends Physics.Body{
+  bodyType = "p";
   points;
   constructor(opts){
     super(opts);
     opts = opts || {};
-    this.points = opts.points || [
-      new Vector(1,1),
-      new Vector(1,-1),
-      new Vector(-1,-1),
-      new Vector(-1,1)
-    ];
+    this.points = [];
+    if (opts.points == undefined){
+      this.points = [
+        new Vector(1,1),
+        new Vector(1,-1),
+        new Vector(-1,-1),
+        new Vector(-1,1)
+      ];
+    }else{
+      for (var i = 0; i < opts.points.length; i++){
+        this.points[i] = Vector.copy(opts.points[i]);
+      }
+    }
   }
   display(ctx){
     ctx.save();

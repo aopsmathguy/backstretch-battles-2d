@@ -1,45 +1,63 @@
+const socket = io('http://localhost:3000', { transports : ['websocket'] });
+
+socket.on('startState', onStartState);
+socket.on('gameState', onGameState);
+socket.on('join', onJoin);
+
 var canvas = $e("canvas");
 var ctx = canvas.getContext("2d");
 var world;
-var cars = {};
+var staticBodies;
+var cars;
 var myId;
-var startGame = function(){
+function startGame(){
   world = new Physics.World();
-  myId = 0;
-  for (var i = 0; i< 20; i++){
-    cars[i] = new Car();
+  staticBodies = [];
+  cars = {};
+  socket.emit('joinGame');
+}
+function onStartState(e){
+  myId = e.id;
+  for (var i = 0; i < e.staticBodies.length; i++){
+    staticBodies[i] = Physics.Body.generateBody(e.staticBodies[i]);
+  }
+  for (var i in e.cars){
+    cars[i] = new Car(e.cars[i]);
+  }
+  for (var i = 0; i < staticBodies.length; i++){
+    console.log(staticBodies[i]);
+    world.addBody(staticBodies[i]);
+  }
+  for (var i in cars){
     world.addBody(cars[i].body);
   }
-  for (var i = 0; i < 100000; i++){
-    var x = 5 * i;
-    var boundary = new Physics.RectBody({
-      length: 10, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 20)
-    });
-    world.addBody(boundary);
-    boundary = new Physics.RectBody({
-      length: 10, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 0)
-    });
-    world.addBody(boundary);
-  }
-  // world.step(0.001);
   frameStep();
 }
-var time = Date.now();
-function frameStep(){
-  var now = Date.now();
-  var dt = Math.max((now - time)/1000,0.001);
-  time = now;
-  requestAnimationFrame(frameStep);
-  // console.log(car.body.velocity);
+function onGameState(e){
   for (var i in cars){
     var c = cars[i];
-    c.updateInputs(controls,dt);
-    c.step(dt);
+    var o = e[i];
+    c.gas = o.gas;
+    c.brake = o.brake;
+    c.eBrake = o.eBrake;
+    c.steerAngle = o.steerAngle;
+    c.netWheelForce = Vector.copy(o.netWheelForce);
+    c.body.position = Vector.copy(o.body.position);
+    c.body.velocity = Vector.copy(o.body.velocity);
+    c.body.angle = o.body.angle;
+    c.body.angleVelocity = o.body.angleVelocity;
   }
-  var substeps = 2;
-  for (var i = 0; i < substeps; i++){
-    world.step(dt/substeps);
+}
+function onJoin(e){
+  var id = e.id;
+  if (id == myId){
+    return;
   }
+  cars[id] = new Car(e.car);
+  world.addBody(cars[id].body);
+}
+function frameStep(){
+  requestAnimationFrame(frameStep);
   clearCanvas();
   var centered = cars[myId].body.position;
   world.transform(ctx, ()=> {

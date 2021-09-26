@@ -102,4 +102,8 @@ var Vector = class {
   copy() {
     return new Vector(this.x, this.y);
   }
+  static copy(opts){
+    opts = opts || {};
+    return new Vector(opts.x || 0, opts.y || 0);
+  }
 };
