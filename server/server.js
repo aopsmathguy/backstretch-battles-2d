@@ -8,7 +8,9 @@ var controls = {};
 var cars = {};
 var staticBodies = [];
 var world;
-var dt = .05;
+var dt = .01;
+var emitPeriod = 3;
+var e = 0;
 function startGame(){
   createObstacles();
   setInterval(step, 1000*dt);
@@ -37,7 +39,11 @@ function step(){
     c.step(dt);
   }
   world.step(dt);
-  io.sockets.emit('gameState', generatePState());
+  e++;
+  if (e >= emitPeriod){
+    e = 0;
+    io.sockets.emit('gameState', {time : Date.now(), cars : generatePState()});
+  }
 }
 function generatePState(){
   var out = {};
@@ -63,6 +69,7 @@ io.on('connection', client => {
   client.on('joinGame', handleJoinGame);
   client.on('keydown', handleKeydown);
   client.on('keyup', handleKeyup);
+  client.on('ping', handlePing);
   function handleJoinGame(){
     controls[client.id] = new UserControls();
     cars[client.id] = new Car();
@@ -70,7 +77,8 @@ io.on('connection', client => {
     client.emit('startState', {
       id : client.id,
       staticBodies : staticBodies,
-      cars : cars
+      cars : cars,
+      dt : dt
     });
     io.sockets.emit('join', {
       id : client.id,
@@ -82,6 +90,10 @@ io.on('connection', client => {
   }
   function handleKeyup(k){
     controls[client.id].keyUp(k);
+  }
+  function handlePing(t){
+    var servTime = Date.now();
+    client.emit('pong', {cTime : t, sTime : servTime});
   }
 });
 // io.listen(process.env.PORT || 3000);

@@ -88,7 +88,7 @@ Physics.World = class{
     func();
     ctx.restore();
   }
-  displayRect(ctx, min, max){
+  displayRect(ctx, min, max, dt){
     ctx.lineWidth = 0.1;
     ctx.strokeStyle = "#000";
     ctx.fillStyle = "rgba(255,255,255,0)";
@@ -107,7 +107,7 @@ Physics.World = class{
       }
     }
     idxSet.forEach((i) =>{
-      this.staticBodies.getValue(i).display(ctx);
+      this.staticBodies.getValue(i).display(ctx, dt);
     });
     this.updateDynamicHashGrid();
     for (var xGrid = minGrid.x - 1; xGrid <= maxGrid.x + 1; xGrid++){
@@ -117,20 +117,20 @@ Physics.World = class{
           continue;
         }
         list.forEach((item) => {
-          this.dynamicBodies.getValue(item).display(ctx);
+          this.dynamicBodies.getValue(item).display(ctx, dt);
         });
       }
     }
   }
-  display(ctx){
+  display(ctx, dt){
     ctx.lineWidth = 0.1;
     ctx.strokeStyle = "#fff";
     ctx.fillStyle = "rgba(255,255,255,0)";
     this.staticBodies.forEach((body, i) => {
-      body.display(ctx);
+      body.display(ctx, dt);
     });
     this.dynamicBodies.forEach((body, i) => {
-      body.display(ctx);
+      body.display(ctx, dt);
     });
   }
   solvePosition(A,B,rA,rB, n, dlength){
@@ -367,6 +367,12 @@ Physics.Body = class{
       return new Physics.PolyBody(opts);
     }
   }
+  lerpedState(dt){
+    var state = {};
+    state.position = this.position.lerp(this.velocity, dt);
+    state.angle = MyMath.lerp(this.angle, this.angleVelocity, dt);
+    return state;
+  }
   getVelocity(r){
     return this.velocity.add(r.rCrossZ(this.angleVelocity));
   }
@@ -545,10 +551,12 @@ Physics.CircleBody = class extends Physics.Body{
     opts = opts || {};
     this.radius = opts.radius || 1;
   }
-  display(ctx){
+  display(ctx, dt){
+    dt = dt || 0;
+    var s = this.lerpedState(dt);
     ctx.save();
-    ctx.translate(this.position.x,this.position.y);
-    ctx.rotate(this.angle);
+    ctx.translate(s.position.x,s.position.y);
+    ctx.rotate(s.angle);
 
     ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
@@ -592,10 +600,12 @@ Physics.PolyBody = class extends Physics.Body{
       }
     }
   }
-  display(ctx){
+  display(ctx, dt){
+    dt = dt || 0;
+    var s = this.lerpedState(dt);
     ctx.save();
-    ctx.translate(this.position.x,this.position.y);
-    ctx.rotate(this.angle);
+    ctx.translate(s.position.x,s.position.y);
+    ctx.rotate(s.angle);
 
     ctx.beginPath();
     for (var i = 0; i < this.points.length; i++){
