@@ -57,7 +57,7 @@ var HashGrid = class{
 }
 var Physics = {};
 Physics.World = class{
-  scale = 20;
+  scale = 8;
   gridSize = 10;
 
   staticBodies;
