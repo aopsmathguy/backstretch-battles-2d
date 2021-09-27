@@ -8,8 +8,8 @@ var controls = {};
 var cars = {};
 var staticBodies = [];
 var world;
-var dt = .01;
-var emitPeriod = 3;
+var dt = .008;
+var emitPeriod = 4;
 var e = 0;
 function startGame(){
   createObstacles();
@@ -35,7 +35,7 @@ function createObstacles(){
 function step(){
   for (var i in cars){
     var c = cars[i];
-    c.updateInputs(controls[i],dt);
+    c.updateInputs(controls[i], dt);
     c.step(dt);
   }
   world.step(dt);
@@ -67,6 +67,7 @@ function generatePState(){
 }
 io.on('connection', client => {
   client.on('joinGame', handleJoinGame);
+  client.on('disconnect', handleDisconnect);
   client.on('keydown', handleKeydown);
   client.on('keyup', handleKeyup);
   client.on('ping', handlePing);
@@ -83,6 +84,14 @@ io.on('connection', client => {
     io.sockets.emit('join', {
       id : client.id,
       car : cars[client.id]
+    });
+  }
+  function handleDisconnect(){
+    delete controls[client.id];
+    world.removeBody(cars[client.id].body);
+    delete cars[client.id];
+    io.sockets.emit('leave', {
+      id : client.id
     });
   }
   function handleKeydown(k){
