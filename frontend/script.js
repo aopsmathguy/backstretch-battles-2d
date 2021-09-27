@@ -40,6 +40,7 @@ function onStartState(e){
     world.addBody(cars[i].body);
   }
   dt = e.dt;
+  controlsQueue.start(dt);
   setInterval(()=>{
     socket.emit("ping", Date.now());
   }, 5000);
@@ -114,7 +115,7 @@ function display(dt){
   });
 }
 function step(dt){
-  cars[myId].updateInputs(controls, dt);
+  cars[myId].updateInputs(controlsQueue.q.get(Math.floor(ping/2 /(1000*dt))), dt);
   for (var i in cars){
     cars[i].step(dt);
   }
