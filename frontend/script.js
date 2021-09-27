@@ -74,7 +74,9 @@ function onLeave(e){
   if (id == myId){
     return;
   }
-  world.removeBody(cars[id].body);
+  if (cars[id]){
+    world.removeBody(cars[id].body);
+  }
   delete cars[id];
 }
 function onPong(e){
