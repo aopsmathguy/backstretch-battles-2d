@@ -73,13 +73,13 @@ var controlsQueue = {
 }
 var controls;
 window.addEventListener('keydown', function(e) {
-  if (!controls.isKeyDown(e.key)) {
+  if (controls && !controls.isKeyDown(e.key)) {
     controls.keyDown(e.key);
     socket.emit('keydown', e.key);
   }
 });
 window.addEventListener('keyup', function(e) {
-  if (controls.isKeyDown(e.key)) {
+  if (controls && controls.isKeyDown(e.key)) {
     controls.keyUp(e.key);
     socket.emit('keyup', e.key);
   }
