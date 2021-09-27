@@ -43,7 +43,7 @@ function onStartState(e){
   controlsQueue.start(dt);
   setInterval(()=>{
     socket.emit("ping", Date.now());
-  }, 5000);
+  }, 500);
   frameStep();
 }
 function onGameState(e){
@@ -80,9 +80,9 @@ function onLeave(e){
 }
 function onPong(e){
   var t = Date.now();
-  ping = t - e.cTime;
+  ping += 0.3 * ((t - e.cTime) - ping);
   var equivCTime = (t + e.cTime)/2;
-  timeDiff = equivCTime - e.sTime;
+  timeDiff += 0.3 * ((equivCTime - e.sTime) - timeDiff);
 }
 function frameStep(){
   requestAnimationFrame(frameStep);
@@ -115,7 +115,7 @@ function display(dt){
   });
 }
 function step(dt){
-  cars[myId].updateInputs(controlsQueue.q.get(Math.floor(ping/2 /(1000*dt))), dt);
+  cars[myId].updateInputs(controlsQueue.q.get(Math.floor(ping /(1000*dt))), dt);
   for (var i in cars){
     cars[i].step(dt);
   }
