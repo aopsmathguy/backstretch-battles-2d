@@ -16,14 +16,14 @@ function startGame(){
   setInterval(step, 1000*dt);
 }
 function createObstacles(){
-  for (var i = 0; i < 100; i++){
-    var x = 5 * i;
+  for (var i = 0; i < 300; i++){
+    var x = 20 * i;
     var boundary = new Physics.RectBody({
-      length: 10, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 10)
+      length: 20, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 10)
     });
     staticBodies.push(boundary);
     boundary = new Physics.RectBody({
-      length: 10, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, -10)
+      length: 20, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, -10)
     });
     staticBodies.push(boundary);
   }
