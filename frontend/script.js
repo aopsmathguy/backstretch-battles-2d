@@ -33,7 +33,6 @@ function onStartState(e){
     cars[i] = new Car(e.cars[i]);
   }
   for (var i = 0; i < staticBodies.length; i++){
-    console.log(staticBodies[i]);
     world.addBody(staticBodies[i]);
   }
   for (var i in cars){
