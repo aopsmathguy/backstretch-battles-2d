@@ -3,6 +3,7 @@ const socket = io('https://salty-chamber-63270.herokuapp.com/', { transports : [
 socket.on('startState', onStartState);
 socket.on('gameState', onGameState);
 socket.on('join', onJoin);
+socket.on('leave', onLeave);
 socket.on('pong', onPong);
 
 var canvas = $e("canvas");
@@ -67,6 +68,14 @@ function onJoin(e){
   }
   cars[id] = new Car(e.car);
   world.addBody(cars[id].body);
+}
+function onLeave(e){
+  var id = e.id;
+  if (id == myId){
+    return;
+  }
+  world.removeBody(cars[id].body);
+  delete cars[id];
 }
 function onPong(e){
   var t = Date.now();
