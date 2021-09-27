@@ -105,7 +105,11 @@ function display(dt){
     var min = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
     var max = state.position.add(world.dimensionsInMeters().multiply(0.5));
 
-    world.displayRect(ctx, min, max, dt);
+    ctx.lineWidth = 0.3;
+    ctx.fillStyle = "rgba(255,255,255,0)";
+    ctx.strokeStyle = "#ff0";
+    world.displayRectStatic(ctx, min, max, dt);
+    ctx.strokeStyle = "#0f0";
     for (var i in cars){
       var c = cars[i];
       c.display(ctx, dt);
