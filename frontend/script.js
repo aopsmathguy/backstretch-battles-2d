@@ -109,12 +109,13 @@ function display(dt){
     ctx.fillStyle = "rgba(255,255,255,0)";
     ctx.strokeStyle = "#ff0";
     world.displayRectStatic(ctx, min, max, dt);
+    ctx.strokeStyle = "#f00";
+    cars[myId].displayDirection(ctx, dt);
     ctx.strokeStyle = "#0f0";
     for (var i in cars){
       var c = cars[i];
       c.display(ctx, dt);
     }
-    cars[myId].displayDirection(ctx, dt);
     ctx.restore();
   });
 }
