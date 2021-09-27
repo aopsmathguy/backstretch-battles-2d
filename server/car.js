@@ -60,7 +60,6 @@ var Car = class {
     dt = dt || 0;
     var cfg = this.cfg;
     var body = this.body;
-    ctx.lineWidth = 0.1;
     ctx.save();
     var s = body.lerpedState(dt);
     ctx.translate(s.position.x,s.position.y);
@@ -135,7 +134,6 @@ var Car = class {
   displayDirection(ctx, dt){
     var cfg = this.cfg;
     var body = this.body;
-    ctx.lineWidth = 0.1;
     ctx.save();
     var s = body.lerpedState(dt);
     ctx.translate(s.position.x,s.position.y);
@@ -271,6 +269,7 @@ Car.Config = class{
     this.rollingResistance = opts.rollingResistance || 12.8;
   }
 }
+
 module.exports = {
   Car,
 }

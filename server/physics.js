@@ -58,7 +58,7 @@ var HashGrid = class{
 }
 var Physics = {};
 Physics.World = class{
-  scale = 20;
+  scale = 8;
   gridSize = 10;
 
   staticBodies;
@@ -88,10 +88,7 @@ Physics.World = class{
     func();
     ctx.restore();
   }
-  displayRect(ctx, min, max, dt){
-    ctx.lineWidth = 0.1;
-    ctx.strokeStyle = "#000";
-    ctx.fillStyle = "rgba(255,255,255,0)";
+  displayRectStatic(ctx, min, max, dt){
     var minGrid = this.getGrid(min);
     var maxGrid = this.getGrid(max);
     var idxSet = new Set();
@@ -109,6 +106,10 @@ Physics.World = class{
     idxSet.forEach((i) =>{
       this.staticBodies.getValue(i).display(ctx, dt);
     });
+  }
+  displayRectDynamic(ctx, min, max, dt){
+    var minGrid = this.getGrid(min);
+    var maxGrid = this.getGrid(max);
     this.updateDynamicHashGrid();
     for (var xGrid = minGrid.x - 1; xGrid <= maxGrid.x + 1; xGrid++){
       for (var yGrid = minGrid.y - 1; yGrid <= maxGrid.y + 1; yGrid++){
@@ -122,10 +123,11 @@ Physics.World = class{
       }
     }
   }
+  displayRect(ctx, min, max, dt){
+    this.displayRectStatic(ctx, min, max, dt);
+    this.displayRectDynamic(ctx, min, max, dt);
+  }
   display(ctx, dt){
-    ctx.lineWidth = 0.1;
-    ctx.strokeStyle = "#fff";
-    ctx.fillStyle = "rgba(255,255,255,0)";
     this.staticBodies.forEach((body, i) => {
       body.display(ctx, dt);
     });
