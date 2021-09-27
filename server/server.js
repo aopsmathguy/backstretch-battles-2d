@@ -96,8 +96,5 @@ io.on('connection', client => {
     client.emit('pong', {cTime : t, sTime : servTime});
   }
 });
-// io.listen(process.env.PORT || 3000);
-io.listen(3000);
-
-
 startGame();
+io.listen(process.env.PORT || 3000);
