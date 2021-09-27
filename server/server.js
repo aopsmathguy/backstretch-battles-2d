@@ -95,10 +95,14 @@ io.on('connection', client => {
     });
   }
   function handleKeydown(k){
-    controls[client.id].keyDown(k);
+    if (controls[client.id]){
+      controls[client.id].keyDown(k);
+    }
   }
   function handleKeyup(k){
-    controls[client.id].keyUp(k);
+    if (controls[client.id]){
+      controls[client.id].keyUp(k);
+    }
   }
   function handlePing(t){
     var servTime = Date.now();
