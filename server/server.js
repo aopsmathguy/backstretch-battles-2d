@@ -88,7 +88,9 @@ io.on('connection', client => {
   }
   function handleDisconnect(){
     delete controls[client.id];
-    world.removeBody(cars[client.id].body);
+    if (cars[client.id]){
+      world.removeBody(cars[client.id].body);
+    }
     delete cars[client.id];
     io.sockets.emit('leave', {
       id : client.id
