@@ -245,7 +245,7 @@ Car.Config = class{
       new Vector(-2.2,-0.8),
       new Vector(-2.2,0.8)
     ];
-    this.mass = opts.mass || 1200;//1000 kg
+    this.mass = opts.mass || 1200;//kg
     this.inertiaScale = opts.inertiaScale || 1.87;
 
     this.maxSteer = opts.maxSteer || 0.5;
@@ -269,7 +269,45 @@ Car.Config = class{
     this.rollingResistance = opts.rollingResistance || 12.8;
   }
 }
-
+var Particle = class {
+  position;
+  strength;
+  decayTime;
+  constructor(opts){
+    opts = opts || {};
+    this.position = Vector.copy(opts.position);
+    this.strength = opts.strength || 0.1;
+    this.decayTime = opts.decayTime || 1;
+  }
+  step(dt){
+    this.strength *= 1 - dt/this.decayTime;
+    if (this.strength < 0.0001){
+      return false;
+    }
+    return true;
+  }
+}
+var ParticleWorld = class {
+  particles;
+  addIdx;
+  pHashGrid;
+  gridSize = 3;
+  constructor(){
+    particles = {};
+    addIdx = 0;
+    pHashGrid = new HashGrid();
+  }
+  getGrid(v){
+    return v.multiply(1/gridSize).floor();
+  }
+  addParticle(p){
+    particles[addIdx] = p;
+    var addTo = this.getGrid(p.position);
+    pHashGrid.add(addTo.x, addTo.y, addIdx);
+    addIdx++;
+  }
+  
+}
 module.exports = {
-  Car,
+  Car, Particle
 }
