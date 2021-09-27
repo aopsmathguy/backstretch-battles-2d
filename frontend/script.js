@@ -121,7 +121,7 @@ function display(dt){
   });
 }
 function step(dt){
-  cars[myId].updateInputs(controlsQueue.q.get(Math.floor(ping /(1000*dt))), dt);
+  cars[myId].updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
   for (var i in cars){
     cars[i].step(dt);
   }
