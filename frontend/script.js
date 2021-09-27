@@ -79,9 +79,9 @@ function onLeave(e){
 }
 function onPong(e){
   var t = Date.now();
-  ping += 0.3 * ((t - e.cTime) - ping);
+  ping += 0.1 * ((t - e.cTime) - ping);
   var equivCTime = (t + e.cTime)/2;
-  timeDiff += 0.3 * ((equivCTime - e.sTime) - timeDiff);
+  timeDiff += 0.1 * ((equivCTime - e.sTime) - timeDiff);
 }
 function frameStep(){
   requestAnimationFrame(frameStep);
