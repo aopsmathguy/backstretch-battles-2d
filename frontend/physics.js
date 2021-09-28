@@ -27,7 +27,7 @@ var TwoWayMap = class{
 }
 var Physics = {};
 Physics.World = class{
-  scale = 8;
+  scale = 12;
   gridSize = 10;
 
   staticBodies;
