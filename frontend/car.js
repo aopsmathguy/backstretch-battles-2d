@@ -258,7 +258,7 @@ Car.Config = class{
 
     this.cornerStiffnessFront = opts.cornerStiffnessFront || 5.0;
     this.cornerStiffnessBack = opts.cornerStiffnessBack || 5.2;
-    this.enginePower = opts.enginePower || 100000;// watts
+    this.enginePower = opts.enginePower || 200000;// watts
 
     this.brakeForce = opts.brakeForce || 12000;// newtons
     this.ebrakeForce = opts.ebrakeForce || this.brakeForce / 2.5;
