@@ -1,4 +1,4 @@
-const socket = io('https://salty-chamber-63270.herokuapp.com/', { transports : ['websocket'] });
+const socket = io('http://localhost:3000', { transports : ['websocket'] });
 
 socket.on('startState', onStartState);
 socket.on('gameState', onGameState);
@@ -10,7 +10,7 @@ var canvas = $e("canvas");
 var ctx = canvas.getContext("2d");
 var world;
 var staticBodies;
-var cars;
+var carWorld;
 var myId;
 var dt;
 
@@ -21,7 +21,7 @@ var ping = 0;
 function startGame(){
   world = new Physics.World();
   staticBodies = [];
-  cars = {};
+  carWorld = new Car.World();
   socket.emit('joinGame');
 }
 function onStartState(e){
@@ -30,13 +30,13 @@ function onStartState(e){
     staticBodies[i] = Physics.Body.generateBody(e.staticBodies[i]);
   }
   for (var i in e.cars){
-    cars[i] = new Car(e.cars[i]);
+    carWorld.cars[i] = new Car(e.cars[i]);
   }
   for (var i = 0; i < staticBodies.length; i++){
     world.addBody(staticBodies[i]);
   }
-  for (var i in cars){
-    world.addBody(cars[i].body);
+  for (var i in carWorld.cars){
+    world.addBody(carWorld.cars[i].body);
   }
   dt = e.dt;
   controlsQueue.start(dt);
@@ -47,8 +47,8 @@ function onStartState(e){
 }
 function onGameState(e){
   physicsTime = e.time;
-  for (var i in cars){
-    var c = cars[i];
+  for (var i in carWorld.cars){
+    var c = carWorld.cars[i];
     var o = e.cars[i];
     c.gas = o.gas;
     c.brake = o.brake;
@@ -66,18 +66,18 @@ function onJoin(e){
   if (id == myId){
     return;
   }
-  cars[id] = new Car(e.car);
-  world.addBody(cars[id].body);
+  carWorld.cars[id] = new Car(e.car);
+  world.addBody(carWorld.cars[id].body);
 }
 function onLeave(e){
   var id = e.id;
   if (id == myId){
     return;
   }
-  if (cars[id]){
-    world.removeBody(cars[id].body);
+  if (carWorld.cars[id]){
+    world.removeBody(carWorld.cars[id].body);
   }
-  delete cars[id];
+  delete carWorld.cars[id];
 }
 function onPong(e){
   var t = Date.now();
@@ -98,7 +98,7 @@ function frameStep(){
   display((sDispTime - physicsTime)/1000);
 }
 function display(dt){
-  var state = cars[myId].body.lerpedState(dt);
+  var state = carWorld.cars[myId].body.lerpedState(dt);
   world.transform(ctx, ()=> {
     ctx.save();
     var translate = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
@@ -110,21 +110,21 @@ function display(dt){
     ctx.fillStyle = "rgba(255,255,255,0)";
     ctx.strokeStyle = "#ff0";
     world.displayRectStatic(ctx, min, max, dt);
+    // ctx.fillStyle = "#ff0";
+    // carWorld.pWorld.display(ctx);
     ctx.strokeStyle = "#f00";
-    cars[myId].displayDirection(ctx, dt);
+    carWorld.cars[myId].displayDirection(ctx, dt);
     ctx.strokeStyle = "#0f0";
-    for (var i in cars){
-      var c = cars[i];
+    for (var i in carWorld.cars){
+      var c = carWorld.cars[i];
       c.display(ctx, dt);
     }
     ctx.restore();
   });
 }
 function step(dt){
-  cars[myId].updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
-  for (var i in cars){
-    cars[i].step(dt);
-  }
+  carWorld.cars[myId].updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
+  carWorld.step(dt);
   world.step(dt);
 }
 function clearCanvas(){

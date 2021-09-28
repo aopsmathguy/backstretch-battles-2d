@@ -25,36 +25,6 @@ var TwoWayMap = class{
       this.map.forEach(func);
     }
 }
-var HashGrid = class{
-  obj;
-  constructor(){
-    this.obj = {};
-  }
-  key(x, y){
-    return x + " " + y;
-  }
-  clear(){
-    this.obj = {};
-  }
-  add(x, y, elem){
-    var hash = this.key(x,y);
-    if (!this.obj[hash]){
-      this.obj[hash] = new Set();
-    }
-    this.obj[hash].add(elem);
-  }
-  remove(x, y, elem){
-    var hash = this.key(x,y);
-    if (!this.obj[hash]){
-      return;
-    }
-    this.obj[hash].delete(elem);
-  }
-  get(x,y){
-    var hash = this.key(x,y);
-    return this.obj[hash];
-  }
-}
 var Physics = {};
 Physics.World = class{
   scale = 8;
@@ -413,6 +383,9 @@ Physics.Circle = class{
     ctx.stroke();
     ctx.restore();
   }
+  containsPoint(p){
+    return p.distanceTo(this.center) < this.radius;
+  }
   extremePoint(dir){
     return this.center.add(dir.multiply(this.radius));
   }
@@ -485,6 +458,18 @@ Physics.Polygon = class {
     ctx.closePath();
     ctx.stroke();
     ctx.restore();
+  }
+  containsPoint(p){
+    for (var i = 0; i < this.vs.length; i++){
+      var from = this.vs[i];
+      var to = this.vs[(i + 1) % this.vs.length];
+      var n = from.normal(to);
+      var d = n.dot(p.subtract(from));
+      if (d > 0){
+        return false;
+      }
+    }
+    return true;
   }
   extremePoint(dir){
     var bestProj = - 100000000;
