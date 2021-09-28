@@ -8,7 +8,7 @@ var controls = {};
 var carWorld;
 var staticBodies = [];
 var world;
-var dt = .01;
+var dt = .1;
 var emitPeriod = 4;
 var e = 0;
 function startGame(){
