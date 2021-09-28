@@ -5,13 +5,14 @@ const { UserControls } = require('./controls.js');
 const { Physics } = require('./physics.js');
 const { Car } = require('./car.js');
 var controls = {};
-var cars = {};
+var carWorld;
 var staticBodies = [];
 var world;
 var dt = .008;
 var emitPeriod = 4;
 var e = 0;
 function startGame(){
+  carWorld = new Car.World();
   createObstacles();
   setInterval(step, 1000*dt);
 }
@@ -33,11 +34,11 @@ function createObstacles(){
   }
 }
 function step(){
-  for (var i in cars){
-    var c = cars[i];
+  for (var i in carWorld.cars){
+    var c = carWorld.cars[i];
     c.updateInputs(controls[i], dt);
-    c.step(dt);
   }
+  carWorld.step(dt);
   world.step(dt);
   e++;
   if (e >= emitPeriod){
@@ -47,8 +48,8 @@ function step(){
 }
 function generatePState(){
   var out = {};
-  for (var i in cars){
-    var c = cars[i];
+  for (var i in carWorld.cars){
+    var c = carWorld.cars[i];
     out[i] = {
       gas : c.gas,
       brake : c.brake,
@@ -73,25 +74,26 @@ io.on('connection', client => {
   client.on('ping', handlePing);
   function handleJoinGame(){
     controls[client.id] = new UserControls();
-    cars[client.id] = new Car();
-    world.addBody(cars[client.id].body);
+    var c = new Car();
+    carWorld.cars[client.id] = c;
+    world.addBody(c.body);
     client.emit('startState', {
       id : client.id,
       staticBodies : staticBodies,
-      cars : cars,
+      cars : carWorld.cars,
       dt : dt
     });
     io.sockets.emit('join', {
       id : client.id,
-      car : cars[client.id]
+      car : carWorld.cars[client.id]
     });
   }
   function handleDisconnect(){
     delete controls[client.id];
-    if (cars[client.id]){
-      world.removeBody(cars[client.id].body);
+    if (carWorld.cars[client.id]){
+      world.removeBody(carWorld.cars[client.id].body);
     }
-    delete cars[client.id];
+    delete carWorld.cars[client.id];
     io.sockets.emit('leave', {
       id : client.id
     });

@@ -1,6 +1,7 @@
 const { MyMath } = require('./mymath.js');
 const { Vector } = require('./vector.js');
 const { Physics } = require('./physics.js');
+const { HashGrid } = require('./hashgrid.js');
 var gravity = 10;
 var Car = class {
   cfg;
@@ -168,7 +169,8 @@ var Car = class {
     }
     ctx.restore();
   }
-  step(dt){
+  step(dt, f){
+    f = f || 1;
     var cfg = this.cfg;
     var body = this.body;
 
@@ -200,15 +202,15 @@ var Car = class {
     var engineForce;
 
     var rpm = Math.abs(carDir.dot(body.velocity));
-    if (rpm < 24){
-      rpm = 24;
+    if (rpm < 12){
+      rpm = 12;
     }
     engineForce = carDir.multiply(
       (this.gas ? cfg.enginePower/Math.abs(rpm) : 0)
       - (this.brake ? (carDir.dot(body.velocity) > 0 ? cfg.brakeForce : cfg.enginePower/Math.abs(rpm)) : 0)
       - MyMath.sign(carDir.dot(body.velocity)) * (this.eBrake ? cfg.ebrakeForce : 0)
     );
-    var dragForce = body.velocity.multiply(-cfg.dragCoefficient * body.velocity.magnitude());
+    var dragForce = body.velocity.multiply(-cfg.dragCoefficient * f * body.velocity.magnitude());
     var rollForce = carDir.multiply(-body.velocity.dot(carDir) * cfg.rollingResistance);
     body.applyImpulse(engineForce.multiply(dt));
     body.applyImpulse(dragForce.multiply(dt));
@@ -269,15 +271,44 @@ Car.Config = class{
     this.rollingResistance = opts.rollingResistance || 12.8;
   }
 }
-var Particle = class {
+Car.World = class {
+  cars;
+  pWorld;
+  constructor(){
+    this.cars = {};
+    this.pWorld = new Car.ParticleWorld();
+  }
+  step(dt){
+    for (var i in this.cars){
+      var c = this.cars[i];
+      this.pWorld.addParticle(new Car.Particle({position : c.body.position, owner : c}));
+    }
+    for (var i in this.cars){
+      var c = this.cars[i];
+      var f = this.pWorld.calculateCarDragFactor(c);
+      c.step(dt, f);
+    }
+    this.pWorld.step(dt);
+  }
+}
+Car.Particle = class {
   position;
+  owner;
   strength;
   decayTime;
   constructor(opts){
     opts = opts || {};
+    this.owner = opts.owner;
     this.position = Vector.copy(opts.position);
-    this.strength = opts.strength || 0.1;
-    this.decayTime = opts.decayTime || 1;
+    this.strength = opts.strength || 0.3;
+    this.decayTime = opts.decayTime || 5;
+  }
+  display(ctx){
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(this.position.x, this.position.y, 0.3, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.restore();
   }
   step(dt){
     this.strength *= 1 - dt/this.decayTime;
@@ -287,27 +318,71 @@ var Particle = class {
     return true;
   }
 }
-var ParticleWorld = class {
+Car.ParticleWorld = class {
   particles;
   addIdx;
   pHashGrid;
   gridSize = 3;
   constructor(){
-    particles = {};
-    addIdx = 0;
-    pHashGrid = new HashGrid();
+    this.particles = {};
+    this.addIdx = 0;
+    this.pHashGrid = new HashGrid();
+  }
+  display(ctx){
+    for (var i in this.particles){
+      this.particles[i].display(ctx);
+    }
+  }
+  calculateCarDragFactor(c){
+    var f = 1;
+    var s = c.body.generateShape();
+    var min = this.getGrid(s.min);
+    var max = this.getGrid(s.max);
+    var check = new Set();
+    for (var xGrid = min.x; xGrid <= max.x; xGrid++){
+      for (var yGrid = min.y; yGrid <= max.y; yGrid++){
+        var set = this.pHashGrid.get(xGrid, yGrid);
+        if (set == undefined){
+          continue;
+        }
+        set.forEach((idx) => {
+          check.add(idx);
+        });
+      }
+    }
+    check.forEach((item, i) => {
+      var p = this.particles[item];
+      if (p && p.owner != c && s.containsPoint(p.position)){
+        f *= 1 - p.strength;
+      }
+    });
+
+    return f;
   }
   getGrid(v){
-    return v.multiply(1/gridSize).floor();
+    return v.multiply(1/this.gridSize).floor();
   }
   addParticle(p){
-    particles[addIdx] = p;
+    this.particles[this.addIdx] = p;
     var addTo = this.getGrid(p.position);
-    pHashGrid.add(addTo.x, addTo.y, addIdx);
-    addIdx++;
+    this.pHashGrid.add(addTo.x, addTo.y, this.addIdx);
+    this.addIdx++;
   }
-  
+  removeParticle(i){
+    var p = this.particles[i];
+    delete this.particles[i];
+    var addTo = this.getGrid(p.position);
+    this.pHashGrid.remove(addTo.x, addTo.y, i);
+  }
+  step(dt){
+    for (var i in this.particles){
+      if (!this.particles[i].step(dt)){
+        this.removeParticle(i);
+      }
+    }
+  }
 }
+
 module.exports = {
-  Car, Particle
+  Car
 }
