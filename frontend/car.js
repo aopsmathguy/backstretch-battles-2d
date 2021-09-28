@@ -31,7 +31,7 @@ var Car = class {
     this.eBrake = controls.keys[" "];
 
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(
-      1 - Math.min(body.velocity.magnitude(),70)/80
+      1 - Math.min(body.velocity.magnitude(),40)/50
       , -1, 1): 1);
     var steerFraction = this.steerAngle / maxSteer;
     var turnRate = 3;
