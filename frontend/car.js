@@ -187,26 +187,21 @@ var Car = class {
     var fwR = carDir.multiplyV(new Vector(cfg.cgToFrontAxle, 0));
     var fwV = body.getVelocity(fwR);
     var fwNorm = new Vector(0,1).rotate(body.angle + this.steerAngle);
-    var fwInvMass = 1/body.mass + fwNorm.cross(fwR)**2/body.inertia;
-
 
     var fwDir = body.angle + this.steerAngle;
     var fwSlipAng = fwV.ang() - fwDir;
     var fwForceMag = fwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(fwSlipAng), -tireGripFront, tireGripFront);
-    var fwForceNeededToStop = -fwV.dot(fwNorm)/fwInvMass;
-    var fwForce = fwNorm.multiply(fwForceNeededToStop);
+    var fwForce = fwNorm.multiply(fwForceMag);
     body.applyImpulse(fwForce.multiply(dt), fwR);
 
     var bwR = (new Vector(-cfg.cgToBackAxle, 0)).multiplyV(carDir);
     var bwV = body.getVelocity(bwR);
     var bwNorm = new Vector(0,1).rotate(this.steerAngle);
-    var bwInvMass = 1/body.mass + bwNorm.cross(bwR)**2/body.inertia;
 
     var bwDir = body.angle;
     var bwSlipAng = bwV.ang() - bwDir;
     var bwForceMag = bwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(bwSlipAng), -tireGripRear, tireGripRear);
-    var bwForceNeededToStop = -bwV.dot(bwNorm)/bwInvMass;
-    var bwForce = bwNorm.multiply(bwForceNeededToStop);
+    var bwForce = bwNorm.multiply(bwForceMag);
     body.applyImpulse(bwForce.multiply(dt), bwR);
 
     var engineForce;
