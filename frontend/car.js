@@ -1,7 +1,3 @@
-const { MyMath } = require('./mymath.js');
-const { Vector } = require('./vector.js');
-const { Physics } = require('./physics.js');
-const { HashGrid } = require('./hashgrid.js');
 var gravity = 10;
 var Car = class {
   cfg;
@@ -392,8 +388,4 @@ Car.ParticleWorld = class {
       }
     }
   }
-}
-
-module.exports = {
-  Car
 }
