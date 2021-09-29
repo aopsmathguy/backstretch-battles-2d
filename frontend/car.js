@@ -183,24 +183,22 @@ var Car = class {
     var l = cfg.cgToFrontAxle + cfg.cgToBackAxle;
     var fwWeight = -wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToFrontAxle/l;
     var bwWeight = wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToBackAxle/l;
-
     var fwR = carDir.multiplyV(new Vector(cfg.cgToFrontAxle, 0));
+    var bwR = (new Vector(-cfg.cgToBackAxle, 0)).multiplyV(carDir);
     var fwV = body.getVelocity(fwR);
-    var fwNorm = new Vector(0,1).rotate(body.angle + this.steerAngle);
+    var bwV = body.getVelocity(bwR);
+
+    var tireGripFront = cfg.maxTireGrip;
+	  var tireGripRear = cfg.maxTireGrip * (1.0 - (this.eBrake ? 0 : 1) * (1.0 - cfg.lockGrip)); //
 
     var fwDir = body.angle + this.steerAngle;
     var fwSlipAng = fwV.ang() - fwDir;
-    var fwForceMag = fwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(fwSlipAng), -tireGripFront, tireGripFront);
-    var fwForce = fwNorm.multiply(fwForceMag);
-
-    var bwR = (new Vector(-cfg.cgToBackAxle, 0)).multiplyV(carDir);
-    var bwV = body.getVelocity(bwR);
-    var bwNorm = new Vector(0,1).rotate(this.steerAngle);
+    var fwForce = new Vector(0, fwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(fwSlipAng), -tireGripFront, tireGripFront)).rotate(fwDir);
 
     var bwDir = body.angle;
     var bwSlipAng = bwV.ang() - bwDir;
-    var bwForceMag = bwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(bwSlipAng), -tireGripRear, tireGripRear);
-    var bwForce = bwNorm.multiply(bwForceMag);
+    var bwForce = new Vector(0, bwWeight * MyMath.clamp(-cfg.cornerStiffnessBack * Math.sin(bwSlipAng), -tireGripRear, tireGripRear)).rotate(bwDir);
+    
 
     var engineForce;
     var rpm = Math.abs(carDir.dot(body.velocity));
