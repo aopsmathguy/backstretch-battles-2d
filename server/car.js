@@ -197,7 +197,7 @@ var Car = class {
     var fwDir = body.angle + this.steerAngle;
     var fwSlipAng = fwV.ang() - fwDir;
     var fwForceMag = fwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(fwSlipAng), -tireGripFront, tireGripFront);
-    var fwForceNeededToStop = fwV.dot(fwNorm)/fwInvMass;
+    var fwForceNeededToStop = -fwV.dot(fwNorm)/fwInvMass;
     var fwForce = fwNorm.multiply(fwForceNeededToStop);
     body.applyImpulse(fwForce.multiply(dt), fwR);
 
@@ -209,7 +209,7 @@ var Car = class {
     var bwDir = body.angle;
     var bwSlipAng = bwV.ang() - bwDir;
     var bwForceMag = bwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(bwSlipAng), -tireGripRear, tireGripRear);
-    var bwForceNeededToStop = bwV.dot(bwNorm)/bwInvMass;
+    var bwForceNeededToStop = -bwV.dot(bwNorm)/bwInvMass;
     var bwForce = bwNorm.multiply(bwForceNeededToStop);
     body.applyImpulse(bwForce.multiply(dt), bwR);
 
@@ -393,7 +393,6 @@ Car.ParticleWorld = class {
     }
   }
 }
-
 module.exports = {
   Car
 }
