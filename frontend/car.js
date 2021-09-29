@@ -176,9 +176,6 @@ var Car = class {
 //     if (!this.netWheelForce.x || !this.netWheelForce.y){
 //       this.netWheelForce = new Vector(0,0);
 //     }
-    var tireGripFront = cfg.maxTireGrip;
-	  var tireGripRear = cfg.maxTireGrip * (1.0 - (this.eBrake ? 0 : 1) * (1.0 - cfg.lockGrip)); //
-
     var wFAlongCar = this.netWheelForce.dot(carDir);
     var l = cfg.cgToFrontAxle + cfg.cgToBackAxle;
     var fwWeight = -wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToFrontAxle/l;
@@ -198,9 +195,8 @@ var Car = class {
     var bwDir = body.angle;
     var bwSlipAng = bwV.ang() - bwDir;
     var bwForce = new Vector(0, bwWeight * MyMath.clamp(-cfg.cornerStiffnessBack * Math.sin(bwSlipAng), -tireGripRear, tireGripRear)).rotate(bwDir);
-    
-
     var engineForce;
+
     var rpm = Math.abs(carDir.dot(body.velocity));
     if (rpm < 12){
       rpm = 12;
@@ -212,12 +208,12 @@ var Car = class {
     );
     var dragForce = body.velocity.multiply(-cfg.dragCoefficient * f * body.velocity.magnitude());
     var rollForce = carDir.multiply(-body.velocity.dot(carDir) * cfg.rollingResistance);
-    body.applyImpulse(fwForce.multiply(dt), fwR);
-    body.applyImpulse(bwForce.multiply(dt), bwR);
     body.applyImpulse(engineForce.multiply(dt));
     body.applyImpulse(dragForce.multiply(dt));
     body.applyImpulse(rollForce.multiply(dt));
 
+    body.applyImpulse(fwForce.multiply(dt), fwR);
+    body.applyImpulse(bwForce.multiply(dt), bwR);
     this.netWheelForce = engineForce.add(rollForce).add(fwForce).add(bwForce);
 
   }
