@@ -180,33 +180,27 @@ var Car = class {
 //     if (!this.netWheelForce.x || !this.netWheelForce.y){
 //       this.netWheelForce = new Vector(0,0);
 //     }
-    var tireGripFront = cfg.maxTireGrip;
-	  var tireGripRear = cfg.maxTireGrip * (1.0 - (this.eBrake ? 0 : 1) * (1.0 - cfg.lockGrip)); //
-
     var wFAlongCar = this.netWheelForce.dot(carDir);
     var l = cfg.cgToFrontAxle + cfg.cgToBackAxle;
     var fwWeight = -wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToFrontAxle/l;
     var bwWeight = wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToBackAxle/l;
-
     var fwR = carDir.multiplyV(new Vector(cfg.cgToFrontAxle, 0));
+    var bwR = (new Vector(-cfg.cgToBackAxle, 0)).multiplyV(carDir);
     var fwV = body.getVelocity(fwR);
-    var fwNorm = new Vector(0,1).rotate(body.angle + this.steerAngle);
+    var bwV = body.getVelocity(bwR);
+
+    var tireGripFront = cfg.maxTireGrip;
+	  var tireGripRear = cfg.maxTireGrip * (1.0 - (this.eBrake ? 0 : 1) * (1.0 - cfg.lockGrip)); //
 
     var fwDir = body.angle + this.steerAngle;
     var fwSlipAng = fwV.ang() - fwDir;
-    var fwForceMag = fwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(fwSlipAng), -tireGripFront, tireGripFront);
-    var fwForce = fwNorm.multiply(fwForceMag);
-
-    var bwR = (new Vector(-cfg.cgToBackAxle, 0)).multiplyV(carDir);
-    var bwV = body.getVelocity(bwR);
-    var bwNorm = new Vector(0,1).rotate(this.steerAngle);
+    var fwForce = new Vector(0, fwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(fwSlipAng), -tireGripFront, tireGripFront)).rotate(fwDir);
 
     var bwDir = body.angle;
     var bwSlipAng = bwV.ang() - bwDir;
-    var bwForceMag = bwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(bwSlipAng), -tireGripRear, tireGripRear);
-    var bwForce = bwNorm.multiply(bwForceMag);
-
+    var bwForce = new Vector(0, bwWeight * MyMath.clamp(-cfg.cornerStiffnessBack * Math.sin(bwSlipAng), -tireGripRear, tireGripRear)).rotate(bwDir);
     var engineForce;
+
     var rpm = Math.abs(carDir.dot(body.velocity));
     if (rpm < 12){
       rpm = 12;
@@ -218,12 +212,12 @@ var Car = class {
     );
     var dragForce = body.velocity.multiply(-cfg.dragCoefficient * f * body.velocity.magnitude());
     var rollForce = carDir.multiply(-body.velocity.dot(carDir) * cfg.rollingResistance);
-    body.applyImpulse(fwForce.multiply(dt), fwR);
-    body.applyImpulse(bwForce.multiply(dt), bwR);
     body.applyImpulse(engineForce.multiply(dt));
     body.applyImpulse(dragForce.multiply(dt));
     body.applyImpulse(rollForce.multiply(dt));
 
+    body.applyImpulse(fwForce.multiply(dt), fwR);
+    body.applyImpulse(bwForce.multiply(dt), bwR);
     this.netWheelForce = engineForce.add(rollForce).add(fwForce).add(bwForce);
 
   }
@@ -245,8 +239,6 @@ Car.Config = class{
   brakeForce;
   dragCoefficient;
   rollingResistance;
-
-  draftPoints;
   constructor(opts){
     opts = opts || {};
     this.points = opts.points || [
@@ -277,18 +269,6 @@ Car.Config = class{
 
     this.dragCoefficient = opts.dragCoefficient || 0.4257;
     this.rollingResistance = opts.rollingResistance || 12.8;
-
-    this.draftPoints = opts.draftPoints || [
-      new Vector(1.5,0.5),
-      new Vector(1.5,-0.5),
-      new Vector(-1.5,-0.5),
-      new Vector(-1.5,0.5),
-      new Vector(1.5,0),
-      new Vector(-1.5,0),
-      new Vector(0,-0.5),
-      new Vector(0,0.5),
-      new Vector(0,0)
-    ];
   }
 }
 Car.World = class {
@@ -301,9 +281,7 @@ Car.World = class {
   step(dt){
     for (var i in this.cars){
       var c = this.cars[i];
-      for (var i in c.draftPoints){
-        this.pWorld.addParticle(new Car.Particle({position : c.body.position.add(c.draftPoints[i]), owner : c}));
-      }
+      this.pWorld.addParticle(new Car.Particle({position : c.body.position, owner : c}));
     }
     for (var i in this.cars){
       var c = this.cars[i];
@@ -322,7 +300,7 @@ Car.Particle = class {
     opts = opts || {};
     this.owner = opts.owner;
     this.position = Vector.copy(opts.position);
-    this.strength = opts.strength || 0.1;
+    this.strength = opts.strength || 0.3;
     this.decayTime = opts.decayTime || 5;
   }
   display(ctx){
@@ -404,6 +382,7 @@ Car.ParticleWorld = class {
     }
   }
 }
+
 module.exports = {
   Car
 }
