@@ -196,7 +196,6 @@ var Car = class {
     var fwSlipAng = fwV.ang() - fwDir;
     var fwForceMag = fwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(fwSlipAng), -tireGripFront, tireGripFront);
     var fwForce = fwNorm.multiply(fwForceMag);
-    body.applyImpulse(fwForce.multiply(dt), fwR);
 
     var bwR = (new Vector(-cfg.cgToBackAxle, 0)).multiplyV(carDir);
     var bwV = body.getVelocity(bwR);
@@ -206,7 +205,6 @@ var Car = class {
     var bwSlipAng = bwV.ang() - bwDir;
     var bwForceMag = bwWeight * MyMath.clamp(-cfg.cornerStiffnessFront * Math.sin(bwSlipAng), -tireGripRear, tireGripRear);
     var bwForce = bwNorm.multiply(bwForceMag);
-    body.applyImpulse(bwForce.multiply(dt), bwR);
 
     var engineForce;
     var rpm = Math.abs(carDir.dot(body.velocity));
@@ -220,6 +218,8 @@ var Car = class {
     );
     var dragForce = body.velocity.multiply(-cfg.dragCoefficient * f * body.velocity.magnitude());
     var rollForce = carDir.multiply(-body.velocity.dot(carDir) * cfg.rollingResistance);
+    body.applyImpulse(fwForce.multiply(dt), fwR);
+    body.applyImpulse(bwForce.multiply(dt), bwR);
     body.applyImpulse(engineForce.multiply(dt));
     body.applyImpulse(dragForce.multiply(dt));
     body.applyImpulse(rollForce.multiply(dt));
