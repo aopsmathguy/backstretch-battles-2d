@@ -186,7 +186,7 @@ var Car = class {
     var bwV = body.getVelocity(bwR);
 
     var tireGripFront = cfg.maxTireGrip;
-	  var tireGripRear = cfg.maxTireGrip * (1.0 - (this.eBrake ? 0 : 1) * (1.0 - cfg.lockGrip)); //
+    var tireGripRear = cfg.maxTireGrip * (1.0 - (this.eBrake ? 0 : 1) * (1.0 - cfg.lockGrip)); //
 
     var fwDir = body.angle + this.steerAngle;
     var fwSlipAng = fwV.ang() - fwDir;
@@ -274,11 +274,16 @@ Car.World = class {
     this.cars = {};
     this.pWorld = new Car.ParticleWorld();
   }
-  step(dt){
+  addCarParticles(){
+    var out = [];
     for (var i in this.cars){
       var c = this.cars[i];
-      this.pWorld.addParticle(new Car.Particle({position : c.body.position, owner : c}));
+      var idx = this.pWorld.addParticle(new Car.Particle({position : c.body.position, strength : Math.min(c.body.velocity.magnitude(), 100)**2/10000}));
+      out.push(idx);
     }
+    return out;
+  }
+  step(dt){
     for (var i in this.cars){
       var c = this.cars[i];
       var f = this.pWorld.calculateCarDragFactor(c);
@@ -289,18 +294,17 @@ Car.World = class {
 }
 Car.Particle = class {
   position;
-  owner;
   strength;
   decayTime;
   constructor(opts){
     opts = opts || {};
-    this.owner = opts.owner;
     this.position = Vector.copy(opts.position);
     this.strength = opts.strength || 0.3;
     this.decayTime = opts.decayTime || 5;
   }
   display(ctx){
     ctx.save();
+    ctx.globalAlpha = this.strength;
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, 0.3, 0, 2 * Math.PI);
     ctx.fill();
@@ -308,7 +312,7 @@ Car.Particle = class {
   }
   step(dt){
     this.strength *= 1 - dt/this.decayTime;
-    if (this.strength < 0.0001){
+    if (this.strength < 0.01){
       return false;
     }
     return true;
@@ -348,7 +352,7 @@ Car.ParticleWorld = class {
     }
     check.forEach((item, i) => {
       var p = this.particles[item];
-      if (p && p.owner != c && s.containsPoint(p.position)){
+      if (p && s.containsPoint(p.position)){
         f *= 1 - p.strength;
       }
     });
@@ -359,13 +363,17 @@ Car.ParticleWorld = class {
     return v.multiply(1/this.gridSize).floor();
   }
   addParticle(p){
-    this.particles[this.addIdx] = p;
+    var idx = this.addIdx++;
+    this.particles[idx] = p;
     var addTo = this.getGrid(p.position);
-    this.pHashGrid.add(addTo.x, addTo.y, this.addIdx);
-    this.addIdx++;
+    this.pHashGrid.add(addTo.x, addTo.y, idx);
+    return idx;
   }
   removeParticle(i){
     var p = this.particles[i];
+    if (p == undefined){
+      return;
+    }
     delete this.particles[i];
     var addTo = this.getGrid(p.position);
     this.pHashGrid.remove(addTo.x, addTo.y, i);

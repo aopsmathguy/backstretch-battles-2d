@@ -1,4 +1,4 @@
-const socket = io('https://salty-chamber-63270.herokuapp.com/', { transports : ['websocket'] });
+const socket = io('http://localhost:3000/', { transports : ['websocket'] });
 
 socket.on('startState', onStartState);
 socket.on('gameState', onGameState);
@@ -11,6 +11,7 @@ var ctx = canvas.getContext("2d");
 var world;
 var staticBodies;
 var carWorld;
+var newParticlesIdx;
 var myId;
 var dt;
 
@@ -22,15 +23,21 @@ function startGame(){
   world = new Physics.World();
   staticBodies = [];
   carWorld = new Car.World();
+  newParticlesIdx = [];
   socket.emit('joinGame');
 }
 function onStartState(e){
   myId = e.id;
+  console.log(e);
   for (var i = 0; i < e.staticBodies.length; i++){
     staticBodies[i] = Physics.Body.generateBody(e.staticBodies[i]);
   }
   for (var i in e.cars){
     carWorld.cars[i] = new Car(e.cars[i]);
+  }
+  for (var i in e.particles){
+    var p = e.particles[i];
+    carWorld.pWorld.addParticle(new Car.Particle(p));
   }
   for (var i = 0; i < staticBodies.length; i++){
     world.addBody(staticBodies[i]);
@@ -59,6 +66,16 @@ function onGameState(e){
     c.body.velocity = Vector.copy(o.body.velocity);
     c.body.angle = o.body.angle;
     c.body.angleVelocity = o.body.angleVelocity;
+  }
+  console.log(newParticlesIdx.length);
+  for (var i = 0; i < newParticlesIdx.length; i++){
+    var idx = newParticlesIdx[i];
+    carWorld.pWorld.removeParticle(idx);
+  }
+  newParticlesIdx = [];
+  for (var i = 0; i < e.newParticles.length; i++){
+    var particleToAdd = e.newParticles[i];
+    var idx = carWorld.pWorld.addParticle(new Car.Particle(particleToAdd));
   }
 }
 function onJoin(e){
@@ -93,7 +110,7 @@ function frameStep(){
     step(dt);
     physicsTime += dt*1000;
   }
-
+  
   clearCanvas();
   display((sDispTime - physicsTime)/1000);
 }
@@ -110,8 +127,8 @@ function display(dt){
     ctx.fillStyle = "rgba(255,255,255,0)";
     ctx.strokeStyle = "#ff0";
     world.displayRectStatic(ctx, min, max, dt);
-    // ctx.fillStyle = "#ff0";
-    // carWorld.pWorld.display(ctx);
+    ctx.fillStyle = "#ff0";
+    carWorld.pWorld.display(ctx);
     ctx.strokeStyle = "#f00";
     carWorld.cars[myId].displayDirection(ctx, dt);
     ctx.strokeStyle = "#0f0";
@@ -125,6 +142,10 @@ function display(dt){
 function step(dt){
   carWorld.cars[myId].updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
   carWorld.step(dt);
+  var idxAdd = carWorld.addCarParticles();
+  for (var i = 0; i < idxAdd.length; i++){
+    newParticlesIdx.push(idxAdd[i]);
+  }
   world.step(dt);
 }
 function clearCanvas(){
