@@ -110,7 +110,7 @@ function frameStep(){
     step(dt);
     physicsTime += dt*1000;
   }
-  
+
   clearCanvas();
   display((sDispTime - physicsTime)/1000);
 }
@@ -128,7 +128,7 @@ function display(dt){
     ctx.strokeStyle = "#ff0";
     world.displayRectStatic(ctx, min, max, dt);
     ctx.fillStyle = "#ff0";
-    carWorld.pWorld.display(ctx);
+    carWorld.pWorld.displayRect(ctx, min, max);
     ctx.strokeStyle = "#f00";
     carWorld.cars[myId].displayDirection(ctx, dt);
     ctx.strokeStyle = "#0f0";

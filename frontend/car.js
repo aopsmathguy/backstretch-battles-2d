@@ -328,10 +328,26 @@ Car.ParticleWorld = class {
     this.addIdx = 0;
     this.pHashGrid = new HashGrid();
   }
-  display(ctx){
-    for (var i in this.particles){
-      this.particles[i].display(ctx);
+  displayRect(ctx, min, max){
+    var minGrid = this.getGrid(min);
+    var maxGrid = this.getGrid(max);
+    var idxSet = new Set();
+    for (var xGrid = minGrid.x - 1; xGrid <= maxGrid.x + 1; xGrid++){
+      for (var yGrid = minGrid.y - 1; yGrid <= maxGrid.y + 1; yGrid++){
+        var list = this.pHashGrid.get(xGrid,yGrid);
+        if (list == undefined){
+          continue;
+        }
+        list.forEach((item) => {
+          idxSet.add(item);
+        });
+      }
     }
+    idxSet.forEach((i) =>{
+      if (this.particles[i]){
+        this.particles[i].display(ctx);
+      }
+    });
   }
   calculateCarDragFactor(c){
     var f = 1;
@@ -356,7 +372,6 @@ Car.ParticleWorld = class {
         f *= 1 - p.strength;
       }
     });
-
     return f;
   }
   getGrid(v){
