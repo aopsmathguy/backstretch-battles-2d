@@ -6,6 +6,7 @@ const { Physics } = require('./physics.js');
 const { Car } = require('./car.js');
 var controls = {};
 var carWorld;
+var newParticlesIdx;
 var staticBodies = [];
 var world;
 var dt = .008;
@@ -13,6 +14,7 @@ var emitPeriod = 4;
 var e = 0;
 function startGame(){
   carWorld = new Car.World();
+  newParticlesIdx = [];
   createObstacles();
   setInterval(step, 1000*dt);
 }
@@ -39,15 +41,22 @@ function step(){
     c.updateInputs(controls[i], dt);
   }
   carWorld.step(dt);
+  var addIdx = carWorld.addCarParticles();
+  for (var i = 0; i < addIdx.length; i++){
+    var idx = addIdx[i];
+    newParticlesIdx.push(idx);
+  }
   world.step(dt);
   e++;
   if (e >= emitPeriod){
     e = 0;
-    io.sockets.emit('gameState', {time : Date.now(), cars : generatePState()});
+    io.sockets.emit('gameState', {time : Date.now(), cars : generatePState(), newParticles : getNewParticles()});
+    newParticlesIdx = [];
   }
 }
 function generatePState(){
   var out = {};
+  out.particles = {};
   for (var i in carWorld.cars){
     var c = carWorld.cars[i];
     out[i] = {
@@ -66,6 +75,16 @@ function generatePState(){
   }
   return out;
 }
+function getNewParticles(){
+  var out = [];
+  for (var i = 0; i < newParticlesIdx.length; i++){
+    var idx = newParticlesIdx[i];
+    if (carWorld.pWorld.particles[idx] != undefined){
+      out.push(carWorld.pWorld.particles[idx]);
+    }
+  }
+  return out;
+}
 io.on('connection', client => {
   client.on('joinGame', handleJoinGame);
   client.on('disconnect', handleDisconnect);
@@ -81,6 +100,7 @@ io.on('connection', client => {
       id : client.id,
       staticBodies : staticBodies,
       cars : carWorld.cars,
+      particles : carWorld.pWorld.particles,
       dt : dt
     });
     io.sockets.emit('join', {
