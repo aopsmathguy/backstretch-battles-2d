@@ -10,6 +10,8 @@ var newParticlesIdx;
 var staticBodies = [];
 var world;
 var dt = .008;
+var draftPeriod = 20;
+var d = 0;
 var emitPeriod = 4;
 var e = 0;
 function startGame(){
@@ -41,16 +43,20 @@ function step(){
     c.updateInputs(controls[i], dt);
   }
   carWorld.step(dt);
-  var addIdx = carWorld.addCarParticles();
-  for (var i = 0; i < addIdx.length; i++){
-    var idx = addIdx[i];
-    newParticlesIdx.push(idx);
+  d++;
+  if (d >= draftPeriod){
+    d = 0;
+    var addIdx = carWorld.addCarParticles();
+    for (var i = 0; i < addIdx.length; i++){
+      var idx = addIdx[i];
+      newParticlesIdx.push(idx);
+    }
   }
   world.step(dt);
   e++;
   if (e >= emitPeriod){
     e = 0;
-    io.sockets.emit('gameState', {time : Date.now(), cars : generatePState(), newParticles : getNewParticles()});
+    io.sockets.emit('gameState', {time : Date.now(), cars : generatePState(), newParticles : getNewParticles(), d : d);
     newParticlesIdx = [];
   }
 }
@@ -100,7 +106,9 @@ io.on('connection', client => {
       staticBodies : staticBodies,
       cars : carWorld.cars,
       particles : carWorld.pWorld.particles,
-      dt : dt
+      dt : dt,
+      draftPeriod : draftPeriod,
+      d : d
     });
     io.sockets.emit('join', {
       id : client.id,
