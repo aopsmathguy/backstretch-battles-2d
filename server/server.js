@@ -56,7 +56,7 @@ function step(){
   e++;
   if (e >= emitPeriod){
     e = 0;
-    io.sockets.emit('gameState', {time : Date.now(), cars : generatePState(), newParticles : getNewParticles(), d : d);
+    io.sockets.emit('gameState', {time : Date.now(), cars : generatePState(), newParticles : getNewParticles(), d : d});
     newParticlesIdx = [];
   }
 }
