@@ -272,17 +272,25 @@ Car.Config = class{
     this.ebrakeForce = opts.ebrakeForce || this.brakeForce / 2.5;
 
     this.dragCoefficient = opts.dragCoefficient || 0.4257;
-    this.draftPoints = opts.draftPoints || [
-      new Vector(1.6,0.5),
-      new Vector(1.6,-0.5),
-      new Vector(-1.6,-0.5),
-      new Vector(-1.6,0.5),
-      new Vector(1.6,0),
-      new Vector(-1.6,0),
-      new Vector(0,-0.5),
-      new Vector(0,0.5),
-      new Vector(0,0)
-    ];
+    if (this.draftPoints != undefined){
+      this.draftPoints = [];
+      for (var i = 0; i < opts.draftPoints.length; i++){
+        this.draftPoints[i] = Vector.copy(opts.draftPoints[i]);
+      }
+    } else{
+      this.draftPoints = [
+        new Vector(1.6,0.5),
+        new Vector(1.6,-0.5),
+        new Vector(-1.6,-0.5),
+        new Vector(-1.6,0.5),
+        new Vector(1.6,0),
+        new Vector(-1.6,0),
+        new Vector(0,-0.5),
+        new Vector(0,0.5),
+        new Vector(0,0)
+      ];
+    }
+    
     this.rollingResistance = opts.rollingResistance || 12.8;
   }
 }
@@ -321,7 +329,6 @@ Car.World = class {
     for (var i in this.cars){
       var c = this.cars[i];
       var f = this.pWorld.calculateCarDragFactor(c);
-      console.log(f);
       c.step(dt, f);
     }
     this.pWorld.step(dt);
