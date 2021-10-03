@@ -237,6 +237,7 @@ Car.Config = class{
   engineForce;
   brakeForce;
   dragCoefficient;
+  draftPoints;
   rollingResistance;
   constructor(opts){
     opts = opts || {};
@@ -267,6 +268,17 @@ Car.Config = class{
     this.ebrakeForce = opts.ebrakeForce || this.brakeForce / 2.5;
 
     this.dragCoefficient = opts.dragCoefficient || 0.4257;
+    this.draftPoints = opts.draftPoints || [
+      new Vector(1.6,0.5),
+      new Vector(1.6,-0.5),
+      new Vector(-1.6,-0.5),
+      new Vector(-1.6,0.5),
+      new Vector(1.6,0),
+      new Vector(-1.6,0),
+      new Vector(0,-0.5),
+      new Vector(0,0.5),
+      new Vector(0,0)
+    ];
     this.rollingResistance = opts.rollingResistance || 12.8;
   }
 }
@@ -291,8 +303,12 @@ Car.World = class {
     var out = [];
     for (var i in this.cars){
       var c = this.cars[i];
-      var idx = this.pWorld.addParticle(new Car.Particle({ownerId : c.id, position : c.body.position, strength : c.body.velocity.magnitude()**2/40000}));
-      out.push(idx);
+      var mag = c.body.velocity.magnitude()**2/10000;
+      for (var j = 0; j < c.draftPoints.length; j++){
+        var pos = c.body.position.add(draftPoints.rotate(c.body.angle));
+        var idx = this.pWorld.addParticle(new Car.Particle({ownerId : c.id, position : pos, strength : mag}));
+        out.push(idx);
+      }
     }
     return out;
   }
