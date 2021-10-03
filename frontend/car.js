@@ -338,7 +338,7 @@ Car.Particle = class {
     opts = opts || {};
     this.position = Vector.copy(opts.position);
     this.strength = opts.strength || 0.3;
-    this.decayTime = opts.decayTime || 2;
+    this.decayTime = opts.decayTime || 5;
     this.ownerId = opts.ownerId || 0;
   }
   display(ctx){
@@ -351,7 +351,7 @@ Car.Particle = class {
   }
   step(dt){
     this.strength *= 1 - dt/this.decayTime;
-    if (this.strength < 0.05){
+    if (this.strength < 0.01){
       return false;
     }
     return true;
