@@ -33,7 +33,7 @@ function onStartState(e){
     staticBodies[i] = Physics.Body.generateBody(e.staticBodies[i]);
   }
   for (var i in e.cars){
-    carWorld.cars[i] = new Car(e.cars[i]);
+    carWorld.addCar(e.cars[i]);
   }
   for (var i in e.particles){
     var p = e.particles[i];
@@ -43,7 +43,7 @@ function onStartState(e){
     world.addBody(staticBodies[i]);
   }
   for (var i in carWorld.cars){
-    world.addBody(carWorld.cars[i].body);
+    world.addBody(carWorld.getCar(i).body);
   }
   dt = e.dt;
   controlsQueue.start(dt);
@@ -55,7 +55,7 @@ function onStartState(e){
 function onGameState(e){
   physicsTime = e.time;
   for (var i in carWorld.cars){
-    var c = carWorld.cars[i];
+    var c = carWorld.getCar(i);
     var o = e.cars[i];
     c.gas = o.gas;
     c.brake = o.brake;
@@ -67,7 +67,6 @@ function onGameState(e){
     c.body.angle = o.body.angle;
     c.body.angleVelocity = o.body.angleVelocity;
   }
-  console.log(newParticlesIdx.length);
   for (var i = 0; i < newParticlesIdx.length; i++){
     var idx = newParticlesIdx[i];
     carWorld.pWorld.removeParticle(idx);
@@ -83,18 +82,18 @@ function onJoin(e){
   if (id == myId){
     return;
   }
-  carWorld.cars[id] = new Car(e.car);
-  world.addBody(carWorld.cars[id].body);
+  carWorld.addCar(e.car);
+  world.addBody(carWorld.getCar(id).body);
 }
 function onLeave(e){
   var id = e.id;
   if (id == myId){
     return;
   }
-  if (carWorld.cars[id]){
-    world.removeBody(carWorld.cars[id].body);
+  if (carWorld.getCar(id)){
+    world.removeBody(carWorld.getCar(id).body);
   }
-  delete carWorld.cars[id];
+  carWorld.removeCar(id);
 }
 function onPong(e){
   var t = Date.now();
@@ -115,7 +114,7 @@ function frameStep(){
   display((sDispTime - physicsTime)/1000);
 }
 function display(dt){
-  var state = carWorld.cars[myId].body.lerpedState(dt);
+  var state = carWorld.getCar(myId).body.lerpedState(dt);
   world.transform(ctx, ()=> {
     ctx.save();
     var translate = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
@@ -130,17 +129,17 @@ function display(dt){
     ctx.fillStyle = "#ff0";
     carWorld.pWorld.displayRect(ctx, min, max);
     ctx.strokeStyle = "#f00";
-    carWorld.cars[myId].displayDirection(ctx, dt);
+    carWorld.getCar(myId).displayDirection(ctx, dt);
     ctx.strokeStyle = "#0f0";
     for (var i in carWorld.cars){
-      var c = carWorld.cars[i];
+      var c = carWorld.getCar(i);
       c.display(ctx, dt);
     }
     ctx.restore();
   });
 }
 function step(dt){
-  carWorld.cars[myId].updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
+  carWorld.getCar(myId).updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
   carWorld.step(dt);
   var idxAdd = carWorld.addCarParticles();
   for (var i = 0; i < idxAdd.length; i++){
