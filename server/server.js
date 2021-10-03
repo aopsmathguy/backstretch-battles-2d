@@ -37,7 +37,7 @@ function createObstacles(){
 }
 function step(){
   for (var i in carWorld.cars){
-    var c = carWorld.cars[i];
+    var c = carWorld.getCar(i);
     c.updateInputs(controls[i], dt);
   }
   carWorld.step(dt);
@@ -58,7 +58,7 @@ function generatePState(){
   var out = {};
   out.particles = {};
   for (var i in carWorld.cars){
-    var c = carWorld.cars[i];
+    var c = carWorld.getCar(i);
     out[i] = {
       gas : c.gas,
       brake : c.brake,
@@ -93,9 +93,8 @@ io.on('connection', client => {
   client.on('ping', handlePing);
   function handleJoinGame(){
     controls[client.id] = new UserControls();
-    var c = new Car();
-    carWorld.cars[client.id] = c;
-    world.addBody(c.body);
+    carWorld.addCar({id : client.id});
+    world.addBody(carWorld.getCar(client.id).body);
     client.emit('startState', {
       id : client.id,
       staticBodies : staticBodies,
@@ -105,15 +104,15 @@ io.on('connection', client => {
     });
     io.sockets.emit('join', {
       id : client.id,
-      car : carWorld.cars[client.id]
+      car : carWorld.getCar(client.id)
     });
   }
   function handleDisconnect(){
     delete controls[client.id];
-    if (carWorld.cars[client.id]){
-      world.removeBody(carWorld.cars[client.id].body);
+    if (carWorld.getCar(client.id)){
+      world.removeBody(carWorld.getCar(client.id).body);
     }
-    delete carWorld.cars[client.id];
+    carWorld.removeCar(client.id);
     io.sockets.emit('leave', {
       id : client.id
     });

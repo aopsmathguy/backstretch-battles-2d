@@ -4,6 +4,7 @@ const { Physics } = require('./physics.js');
 const { HashGrid } = require('./hashgrid.js');
 var gravity = 10;
 var Car = class {
+  id;
   cfg;
   body;
   gas;
@@ -11,8 +12,10 @@ var Car = class {
   eBrake;
   steerAngle;
   netWheelForce;
+  //required id
   constructor(opts){
     opts = opts || {};
+    this.id = opts.id;
     this.cfg = new Car.Config(opts.cfg);
     if (opts.body != undefined){
       this.body = Physics.Body.generateBody(opts.body);
@@ -278,11 +281,21 @@ Car.World = class {
     this.cars = {};
     this.pWorld = new Car.ParticleWorld();
   }
+  getCar(id){
+    return this.cars[id];
+  }
+  addCar(opts){
+    var id = opts.id;
+    this.cars[id] = new Car(opts);
+  }
+  removeCar(id){
+    delete this.cars[id];
+  }
   addCarParticles(){
     var out = [];
     for (var i in this.cars){
       var c = this.cars[i];
-      var idx = this.pWorld.addParticle(new Car.Particle({position : c.body.position, strength : Math.min(c.body.velocity.magnitude(), 100)**2/10000}));
+      var idx = this.pWorld.addParticle(new Car.Particle({ownerId : c.id, position : c.body.position, strength : c.body.velocity.magnitude()**2/40000}));
       out.push(idx);
     }
     return out;
@@ -300,11 +313,14 @@ Car.Particle = class {
   position;
   strength;
   decayTime;
+  ownerId;
+  //required id
   constructor(opts){
     opts = opts || {};
     this.position = Vector.copy(opts.position);
     this.strength = opts.strength || 0.3;
     this.decayTime = opts.decayTime || 5;
+    this.ownerId = opts.ownerId || 0;
   }
   display(ctx){
     ctx.save();
@@ -372,7 +388,7 @@ Car.ParticleWorld = class {
     }
     check.forEach((item, i) => {
       var p = this.particles[item];
-      if (p && s.containsPoint(p.position)){
+      if (p && p.ownerId != c.id && s.containsPoint(p.position)){
         f *= 1 - p.strength;
       }
     });
@@ -405,7 +421,6 @@ Car.ParticleWorld = class {
     }
   }
 }
-
 module.exports = {
   Car
 }
