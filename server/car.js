@@ -307,9 +307,10 @@ Car.World = class {
     var out = [];
     for (var i in this.cars){
       var c = this.cars[i];
+      var cfg = c.cfg;
       var mag = c.body.velocity.magnitude()**2/10000;
-      for (var j = 0; j < c.draftPoints.length; j++){
-        var pos = c.body.position.add(draftPoints.rotate(c.body.angle));
+      for (var j = 0; j < cfg.draftPoints.length; j++){
+        var pos = c.body.position.add(cfg.draftPoints[j].rotate(c.body.angle));
         var idx = this.pWorld.addParticle(new Car.Particle({ownerId : c.id, position : pos, strength : mag}));
         out.push(idx);
       }
