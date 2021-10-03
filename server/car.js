@@ -342,7 +342,7 @@ Car.Particle = class {
     opts = opts || {};
     this.position = Vector.copy(opts.position);
     this.strength = opts.strength || 0.3;
-    this.decayTime = opts.decayTime || 5;
+    this.decayTime = opts.decayTime || 1;
     this.ownerId = opts.ownerId || 0;
   }
   display(ctx){
