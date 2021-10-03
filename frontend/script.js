@@ -15,6 +15,8 @@ var carWorld;
 var newParticlesIdx;
 var myId;
 var dt;
+var draftPeriod;
+var d;
 
 var lastRecieve;
 var physicsTime;
@@ -47,6 +49,8 @@ function onStartState(e){
     world.addBody(carWorld.getCar(i).body);
   }
   dt = e.dt;
+  draftPeriod = e.draftPeriod;
+  d = e.d;
   controlsQueue.start(dt);
   setInterval(()=>{
     socket.emit("ping", Date.now());
@@ -77,6 +81,7 @@ function onGameState(e){
     var particleToAdd = e.newParticles[i];
     var idx = carWorld.pWorld.addParticle(new Car.Particle(particleToAdd));
   }
+  d = e.d;
 }
 function onJoin(e){
   var id = e.id;
@@ -110,7 +115,6 @@ function frameStep(){
     step(dt);
     physicsTime += dt*1000;
   }
-
   clearCanvas();
   display((sDispTime - physicsTime)/1000);
 }
@@ -142,9 +146,14 @@ function display(dt){
 function step(dt){
   carWorld.getCar(myId).updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
   carWorld.step(dt);
-  var idxAdd = carWorld.addCarParticles();
-  for (var i = 0; i < idxAdd.length; i++){
-    newParticlesIdx.push(idxAdd[i]);
+  d++;
+  if (d >= draftPeriod){
+    d = 0;
+    var addIdx = carWorld.addCarParticles();
+    for (var i = 0; i < addIdx.length; i++){
+      var idx = addIdx[i];
+      newParticlesIdx.push(idx);
+    }
   }
   world.step(dt);
 }
