@@ -36,25 +36,23 @@ var Car = class {
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(
       1 - Math.min(body.velocity.magnitude(),45)/50
       , -1, 1): 1);
-    var steerFraction = this.steerAngle / maxSteer;
-    var turnRate = 3;
+    var turnRate = 40;
     if (controls.keys["ArrowLeft"]){
-      steerFraction -= dt * turnRate;
+      this.steerAngle -= dt * turnRate;
     } else if (controls.keys["ArrowRight"]){
-      steerFraction += dt * turnRate;
+      this.steerAngle += dt * turnRate;
     }
     else{
-      if (steerFraction > 0){
-        steerFraction -= dt * turnRate/2;
-        steerFraction = Math.max(0, steerFraction);
+      if (this.steerAngle > 0){
+        this.steerAngle -= dt * turnRate/2;
+        this.steerAngle = Math.max(0, this.steerAngle);
       }
       else{
-        steerFraction += dt * turnRate/2;
-        steerFraction = Math.min(0, steerFraction);
+        this.steerAngle += dt * turnRate/2;
+        this.steerAngle = Math.min(0, this.steerAngle);
       }
     }
-    steerFraction = MyMath.clamp(steerFraction, -1, 1);
-    this.steerAngle = maxSteer * steerFraction;
+    this.steerAngle = MyMath.clamp(this.steerAngle, -maxSteer, maxSteer);
   }
   display(ctx, dt){
     dt = dt || 0;
