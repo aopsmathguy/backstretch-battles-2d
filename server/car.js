@@ -40,7 +40,7 @@ var Car = class {
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(
       1 - Math.min(body.velocity.magnitude(),45)/50
       , -1, 1): 1);
-    var turnRate = 40;
+    var turnRate = 40*Math.PI/180;
     if (controls.keys["ArrowLeft"]){
       this.steerAngle -= dt * turnRate;
     } else if (controls.keys["ArrowRight"]){
