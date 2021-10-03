@@ -10,7 +10,7 @@ var newParticlesIdx;
 var staticBodies = [];
 var world;
 var dt = .008;
-var draftPeriod = 20;
+var draftPeriod = 10;
 var d = 0;
 var emitPeriod = 4;
 var e = 0;
