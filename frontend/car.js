@@ -273,12 +273,6 @@ Car.Config = class{
       }
     } else{
       this.draftPoints = [
-        new Vector(1.6,0.5),
-        new Vector(1.6,-0.5),
-        new Vector(-1.6,-0.5),
-        new Vector(-1.6,0.5),
-        new Vector(1.6,0),
-        new Vector(-1.6,0),
         new Vector(0,-0.5),
         new Vector(0,0.5),
         new Vector(0,0)
