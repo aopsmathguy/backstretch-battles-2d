@@ -10,9 +10,9 @@ var newParticlesIdx;
 var staticBodies = [];
 var world;
 var dt = .008;
-var draftPeriod = 10;
+var draftPeriod = 5;
 var d = 0;
-var emitPeriod = 4;
+var emitPeriod = 8;
 var e = 0;
 function startGame(){
   carWorld = new Car.World();
