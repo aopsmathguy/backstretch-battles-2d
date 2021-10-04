@@ -260,12 +260,12 @@ Car.Config = class{
 
     this.cornerStiffnessFront = opts.cornerStiffnessFront || 5.0;
     this.cornerStiffnessBack = opts.cornerStiffnessBack || 5.2;
-    this.enginePower = opts.enginePower || 200000;// watts
+    this.enginePower = opts.enginePower || 300000;// watts
 
     this.brakeForce = opts.brakeForce || 12000;// newtons
     this.ebrakeForce = opts.ebrakeForce || this.brakeForce / 2.5;
 
-    this.dragCoefficient = opts.dragCoefficient || 0.4257;
+    this.dragCoefficient = opts.dragCoefficient || 0.8;
     if (this.draftPoints != undefined){
       this.draftPoints = [];
       for (var i = 0; i < opts.draftPoints.length; i++){
