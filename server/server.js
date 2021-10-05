@@ -12,7 +12,7 @@ var world;
 var dt = .008;
 var draftPeriod = 5;
 var d = 0;
-var emitPeriod = 12;
+var emitPeriod = 16;
 var e = 0;
 function startGame(){
   carWorld = new Car.World();
