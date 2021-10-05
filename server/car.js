@@ -423,12 +423,9 @@ Car.ParticleWorld = class {
   }
   removeParticle(i){
     var p = this.particles[i];
-    if (p == undefined){
-      return;
-    }
-    delete this.particles[i];
     var addTo = this.getGrid(p.position);
     this.pHashGrid.remove(addTo.x, addTo.y, i);
+    delete this.particles[i];
   }
   step(dt){
     for (var i in this.particles){
