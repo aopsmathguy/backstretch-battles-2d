@@ -19,12 +19,12 @@ var HashGrid = class{
   remove(x, y, elem){
     var hash = this.key(x,y);
     if (!this.obj[hash]){
-      return;
+      return false;
     }
-    this.obj[hash].delete(elem);
+    var successful = this.obj[hash].delete(elem);
     if (this.obj[hash].size == 0){
       delete this.obj[hash];
-    }
+    } return successful;
   }
   get(x,y){
     var hash = this.key(x,y);
