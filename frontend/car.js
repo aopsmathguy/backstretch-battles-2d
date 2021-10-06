@@ -240,10 +240,24 @@ Car.Config = class{
   constructor(opts){
     opts = opts || {};
     this.points = opts.points || [
-      new Vector(2.2,0.8),
-      new Vector(2.2,-0.8),
-      new Vector(-2.2,-0.8),
-      new Vector(-2.2,0.8)
+      new Vector(2.2,0),
+      new Vector(2.16,0.33),
+      new Vector(2.03,0.57),
+      new Vector(1.85,0.72),
+      new Vector(1.63,0.8),
+      new Vector(-1.45,0.8),
+      new Vector(-1.81,0.76),
+      new Vector(-2.03,0.72),
+      new Vector(-2.18,0.5),
+      new Vector(-2.2,0),
+      new Vector(-2.18,-0.5),
+      new Vector(-2.03,-0.72),
+      new Vector(-1.81,-0.76),
+      new Vector(-1.45,-0.8),
+      new Vector(1.63,-0.8),
+      new Vector(1.85,-0.72),
+      new Vector(2.03,-0.57),
+      new Vector(2.16,-0.33)
     ];
     this.mass = opts.mass || 1200;//kg
     this.inertiaScale = opts.inertiaScale || 1.87;
