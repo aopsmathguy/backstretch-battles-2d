@@ -435,7 +435,7 @@ Car.ParticleWorld = class {
   step(dt){
     for (var i in this.particles){
       if (!this.particles[i].step(dt)){
-        console.log(this.removeParticle(i));
+        this.removeParticle(i);
       }
     }
   }
