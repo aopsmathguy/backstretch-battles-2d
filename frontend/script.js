@@ -31,16 +31,15 @@ function startGame(){
 }
 function onStartState(e){
   myId = e.id;
-  console.log(e);
   for (var i = 0; i < e.staticBodies.length; i++){
     staticBodies[i] = Physics.Body.generateBody(e.staticBodies[i]);
   }
   for (var i in e.cars){
     carWorld.addCar(e.cars[i]);
   }
-  for (var i in e.particles){
+  for (var i = 0; i < e.particles.length; i++){
     var p = e.particles[i];
-    carWorld.pWorld.addParticle(new Car.Particle(p));
+    var idx = carWorld.pWorld.addParticle(new Car.Particle(p));
   }
   for (var i = 0; i < staticBodies.length; i++){
     world.addBody(staticBodies[i]);

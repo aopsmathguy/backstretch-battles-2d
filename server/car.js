@@ -414,6 +414,10 @@ Car.ParticleWorld = class {
   getGrid(v){
     return v.multiply(1/this.gridSize).floor();
   }
+  getIdxSet(p){
+    var addTo = this.getGrid(p.position);
+    return this.pHashGrid.get(addTo.x, addTo.y);
+  }
   addParticle(p){
     var idx = this.addIdx++;
     this.particles[idx] = p;
@@ -422,9 +426,10 @@ Car.ParticleWorld = class {
     return idx;
   }
   removeParticle(i){
+    i = parseInt(i);
     var p = this.particles[i];
     if (p == undefined){
-      return false;
+      return 0;
     }
     var addTo = this.getGrid(p.position);
     var success = this.pHashGrid.remove(addTo.x, addTo.y, i);
@@ -434,7 +439,7 @@ Car.ParticleWorld = class {
   step(dt){
     for (var i in this.particles){
       if (!this.particles[i].step(dt)){
-        this.removeParticle(i);
+        console.log(this.removeParticle(i));
       }
     }
   }
