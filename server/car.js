@@ -203,8 +203,8 @@ var Car = class {
     var engineForce;
 
     var rpm = Math.abs(carDir.dot(body.velocity));
-    if (rpm < 12){
-      rpm = 12;
+    if (rpm < 20){
+      rpm = 20;
     }
     engineForce = carDir.multiply(
       (this.gas ? cfg.enginePower/Math.abs(rpm) : 0)
@@ -278,7 +278,7 @@ Car.Config = class{
 
     this.cornerStiffnessFront = opts.cornerStiffnessFront || 6.5;
     this.cornerStiffnessBack = opts.cornerStiffnessBack || 6.9;
-    this.enginePower = opts.enginePower || 300000;// watts
+    this.enginePower = opts.enginePower || 500000;// watts
 
     this.brakeForce = opts.brakeForce || 12000;// newtons
     this.ebrakeForce = opts.ebrakeForce || this.brakeForce / 2.5;
