@@ -74,9 +74,7 @@ function onGameState(e){
   }
   for (var i = 0; i < newParticlesIdx.length; i++){
     var idx = newParticlesIdx[i];
-    if (carWorld.pWorld.particles[idx]){
-      carWorld.pWorld.removeParticle(idx);
-    }
+    carWorld.pWorld.removeParticle(idx);
   }
   newParticlesIdx = [];
   for (var i = 0; i < e.newParticles.length; i++){
