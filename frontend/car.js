@@ -54,7 +54,67 @@ var Car = class {
     }
     this.steerAngle = MyMath.clamp(this.steerAngle, -maxSteer, maxSteer);
   }
-  display(ctx, dt){
+  displayWheels(ctx, dt){
+    dt = dt || 0;
+    var cfg = this.cfg;
+    var body = this.body;
+    ctx.save();
+    var s = body.lerpedState(dt);
+    ctx.translate(s.position.x,s.position.y);
+    ctx.rotate(s.angle);
+    ctx.save();
+    ctx.translate(cfg.cgToFrontAxle,cfg.halfFrontAxleLength);
+    ctx.rotate(this.steerAngle);
+    ctx.beginPath();
+    ctx.moveTo(0.3,0.1);
+    ctx.lineTo(0.3,-0.1);
+    ctx.lineTo(-0.3,-0.1);
+    ctx.lineTo(-0.3,0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(cfg.cgToFrontAxle,-cfg.halfFrontAxleLength);
+    ctx.rotate(this.steerAngle);
+    ctx.beginPath();
+    ctx.moveTo(0.3,0.1);
+    ctx.lineTo(0.3,-0.1);
+    ctx.lineTo(-0.3,-0.1);
+    ctx.lineTo(-0.3,0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(-cfg.cgToBackAxle,cfg.halfBackAxleLength);
+    ctx.beginPath();
+    ctx.moveTo(0.3,0.1);
+    ctx.lineTo(0.3,-0.1);
+    ctx.lineTo(-0.3,-0.1);
+    ctx.lineTo(-0.3,0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(-cfg.cgToBackAxle,-cfg.halfBackAxleLength);
+    ctx.beginPath();
+    ctx.moveTo(0.3,0.1);
+    ctx.lineTo(0.3,-0.1);
+    ctx.lineTo(-0.3,-0.1);
+    ctx.lineTo(-0.3,0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.restore();
+  }
+  displayBody(ctx, dt){
     dt = dt || 0;
     var cfg = this.cfg;
     var body = this.body;
@@ -74,59 +134,8 @@ var Car = class {
       }
     }
     ctx.closePath();
-    // ctx.fill();
+    ctx.fill();
     ctx.stroke();
-
-    ctx.save();
-    ctx.translate(cfg.cgToFrontAxle,cfg.halfFrontAxleLength);
-    ctx.rotate(this.steerAngle);
-    ctx.beginPath();
-    ctx.moveTo(0.3,0.1);
-    ctx.lineTo(0.3,-0.1);
-    ctx.lineTo(-0.3,-0.1);
-    ctx.lineTo(-0.3,0.1);
-    ctx.closePath();
-    // ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-
-    ctx.save();
-    ctx.translate(cfg.cgToFrontAxle,-cfg.halfFrontAxleLength);
-    ctx.rotate(this.steerAngle);
-    ctx.beginPath();
-    ctx.moveTo(0.3,0.1);
-    ctx.lineTo(0.3,-0.1);
-    ctx.lineTo(-0.3,-0.1);
-    ctx.lineTo(-0.3,0.1);
-    ctx.closePath();
-    // ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-
-    ctx.save();
-    ctx.translate(-cfg.cgToBackAxle,cfg.halfBackAxleLength);
-    ctx.beginPath();
-    ctx.moveTo(0.3,0.1);
-    ctx.lineTo(0.3,-0.1);
-    ctx.lineTo(-0.3,-0.1);
-    ctx.lineTo(-0.3,0.1);
-    ctx.closePath();
-    // ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-
-    ctx.save();
-    ctx.translate(-cfg.cgToBackAxle,-cfg.halfBackAxleLength);
-    ctx.beginPath();
-    ctx.moveTo(0.3,0.1);
-    ctx.lineTo(0.3,-0.1);
-    ctx.lineTo(-0.3,-0.1);
-    ctx.lineTo(-0.3,0.1);
-    ctx.closePath();
-    // ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-
     ctx.restore();
   }
   displayDirection(ctx, dt){
@@ -266,7 +275,7 @@ Car.Config = class{
     this.halfFrontAxleLength = opts.halfFrontAxleLength || 0.8;
     this.halfBackAxleLength = opts.halfBackAxleLength || 0.8;
 
-    this.cgToFrontAxle = opts.cgToFrontAxle || 1.3;//m
+    this.cgToFrontAxle = opts.cgToFrontAxle || 1.2;//m
     this.cgToBackAxle = opts.cgToBackAxle || 1.3;//m
     this.cgHeight = opts.cgHeight || 0.5;//m
     this.maxTireGrip = opts.maxTireGrip || 3;//
@@ -350,7 +359,7 @@ Car.Particle = class {
     this.ownerId = opts.ownerId || 0;
   }
   display(ctx){
-    ctx.save();
+    ctx.save(); 
     ctx.globalAlpha = this.strength;
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, 0.3, 0, 2 * Math.PI);
