@@ -127,25 +127,20 @@ function display(dt){
     var max = state.position.add(world.dimensionsInMeters().multiply(0.5));
 
     ctx.lineWidth = 0.3;
-    ctx.fillStyle = "rgba(128,128,255,1)";
-    ctx.strokeStyle = "#000";
+    ctx.fillStyle = "rgba(128,128,255,0)";
+    ctx.strokeStyle = "#0f0";
     world.displayRectStatic(ctx, min, max, dt);
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = "#fff";
     carWorld.pWorld.displayRect(ctx, min, max);
     ctx.strokeStyle = "#f00";
-    ctx.fillStyle = "rgba(192,192,192,1)";
     carWorld.getCar(myId).displayDirection(ctx, dt);
     for (var i in carWorld.cars){
       var c = carWorld.getCar(i);
-      ctx.strokeStyle = "rgba(192,192,192,0)";
-      ctx.fillStyle = "#000";
+      ctx.strokeStyle = "#fff";
+      ctx.fillStyle = "#fff";
       c.displayWheels(ctx, dt);
-      if (i == myId){
-        ctx.fillStyle = "#080";
-      }
-      else{
-        ctx.fillStyle = "#800";
-      }
+      ctx.strokeStyle = (i == myId ? "#0ff" : "#f80");
+      ctx.fillStyle = "rgba(192,192,192,0)";
       c.displayBody(ctx, dt);
     }
     ctx.restore();
