@@ -180,7 +180,7 @@ var Car = class {
     ctx.restore();
   }
   step(dt, f){
-    f = f || 1;
+    f = (f == undefined ? 1 : f);
     var cfg = this.cfg;
     var body = this.body;
 
@@ -358,7 +358,7 @@ Car.Particle = class {
   constructor(opts){
     opts = opts || {};
     this.position = Vector.copy(opts.position);
-    this.strength = opts.strength || 0.3;
+    this.strength = opts.strength || 0;
     this.decayTime = opts.decayTime || 5;
     this.ownerId = opts.ownerId || 0;
   }
@@ -467,7 +467,6 @@ Car.ParticleWorld = class {
     }
   }
 }
-
 module.exports = {
   Car
 }
