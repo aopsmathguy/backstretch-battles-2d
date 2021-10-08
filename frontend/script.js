@@ -102,7 +102,7 @@ function onLeave(e){
 }
 function onPong(e){
   var t = Date.now();
-  ping += 0.1 * ((t - e.cTime) - ping);
+  ping += 0.3 * ((t - e.cTime) - ping);
   var equivCTime = (t + e.cTime)/2;
   timeDiff += 0.1 * ((equivCTime - e.sTime) - timeDiff);
 }
