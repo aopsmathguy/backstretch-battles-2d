@@ -20,8 +20,8 @@ var d;
 
 var lastRecieve;
 var physicsTime;
-var timeDiff;
-var ping;
+var timeDiff = 0;
+var ping = 0;
 function startGame(){
   world = new Physics.World();
   staticBodies = [];
