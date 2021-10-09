@@ -104,17 +104,9 @@ function onLeave(e){
 }
 function onPong(e){
   var t = Date.now();
-  if (ping){
-    ping += 0.3 * ((t - e.cTime) - ping);
-  } else{
-    ping = (t - e.cTime);
-  }
+  ping += 0.3 * ((t - e.cTime) - ping);
   var equivCTime = (t + e.cTime)/2;
-  if (timeDiff){
-    timeDiff += 0.3 * ((equivCTime - e.sTime) - ping);
-  } else{
-    timeDiff = (equivCTime - e.sTime);
-  }
+  timeDiff += 0.3 * ((equivCTime - e.sTime) - timeDiff);
 }
 function frameStep(){
   requestAnimationFrame(frameStep);
