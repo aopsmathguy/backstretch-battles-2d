@@ -108,7 +108,8 @@ io.on('connection', client => {
       particles : carWorld.pWorld.particles,
       dt : dt,
       draftPeriod : draftPeriod,
-      d : d
+      d : d,
+      serverTime : Date.now()
     });
     io.sockets.emit('join', {
       id : client.id,
