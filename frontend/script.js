@@ -50,6 +50,7 @@ function onStartState(e){
   dt = e.dt;
   draftPeriod = e.draftPeriod;
   d = e.d;
+  timeDiff = Date.now() - e.serverTime;
   controlsQueue.start(dt);
   setInterval(()=>{
     socket.emit("ping", Date.now());
