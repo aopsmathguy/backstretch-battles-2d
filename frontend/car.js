@@ -301,7 +301,7 @@ Car.Config = class{
         new Vector(0,0)
       ];
     }
-    
+
     this.rollingResistance = opts.rollingResistance || 12.8;
   }
 }
@@ -359,7 +359,7 @@ Car.Particle = class {
     this.ownerId = opts.ownerId || 0;
   }
   display(ctx){
-    ctx.save(); 
+    ctx.save();
     ctx.globalAlpha = this.strength;
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, 0.3, 0, 2 * Math.PI);
@@ -461,5 +461,27 @@ Car.ParticleWorld = class {
         this.removeParticle(i);
       }
     }
+  }
+}
+Car.BarrierWorld = class{
+  bodies;
+  enabled;
+  constructor(b){
+    this.bodies = b;
+    this.enabled = false;
+  }
+  enable(world){
+    for (var i = 0; i < this.bodies.length; i++){
+      var body = this.bodies[i];
+      world.addBody(body);
+    }
+    this.enabled = true;
+  }
+  disable(world){
+    for (var i = 0; i < this.bodies.length; i++){
+      var body = this.bodies[i];
+      world.removeBody(body);
+    }
+    this.enabled = false;
   }
 }
