@@ -142,7 +142,7 @@ function display(dt){
       ctx.fillStyle = "#fff";
       c.displayWheels(ctx, dt);
       ctx.strokeStyle = (i == myId ? "#0ff" : "#f80");
-      ctx.fillStyle = "rgba(192,192,192,0)";
+      ctx.fillStyle = (i == myId ? "rgba(0,255,255,0.5)" : "rgba(255,128,0,0.5)");
       c.displayBody(ctx, dt);
     }
     ctx.restore();

@@ -62,7 +62,6 @@ function step(){
 }
 function generatePState(){
   var out = {};
-  out.particles = {};
   for (var i in carWorld.cars){
     var c = carWorld.getCar(i);
     out[i] = {
