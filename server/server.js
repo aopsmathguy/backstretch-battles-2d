@@ -139,12 +139,13 @@ function step(){
 function updateState(dt){
   switch(state){
     case "wait":
+      console.log(carWorld.count);
       if (carWorld.count >= 2){
         state = "countdown";
         timer = COUNT_TIME;
         return true;
       }
-      break;
+      return false;
     case "countdown":
       timer -= 1000 * dt;
       if (carWorld.count < 2){
@@ -158,7 +159,7 @@ function updateState(dt){
         disableStartBarriers();
         return true;
       }
-      break;
+      return false;
     case "started":
       if (carWorld.count < 2){
         state = "ended";
@@ -171,7 +172,7 @@ function updateState(dt){
         timer = END_TIME;
         return true;
       }
-      break;
+      return false;
     case "ended":
       timer -= 1000 * dt;
       if (timer < 0){
@@ -187,9 +188,8 @@ function updateState(dt){
         resetCars();
         return true;
       }
-      break;
+      return false;
   }
-  return false;
 }
 function resetCars(){
   for (var i in carWorld.cars){
