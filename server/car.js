@@ -485,22 +485,43 @@ Car.BarrierWorld = class{
     this.enabled = opts.enabled || false;
   }
   enable(world){
-    if (!this.enabled){
-      for (var i = 0; i < this.bodies.length; i++){
-        var body = this.bodies[i];
-        world.addBody(body);
-      }
-      this.enabled = true;
+    for (var i = 0; i < this.bodies.length; i++){
+      var body = this.bodies[i];
+      world.addBody(body);
     }
+    this.enabled = true;
   }
   disable(world){
-    if (this.enabled){
-      for (var i = 0; i < this.bodies.length; i++){
-        var body = this.bodies[i];
-        world.removeBody(body);
-      }
-      this.enabled = false;
+    for (var i = 0; i < this.bodies.length; i++){
+      var body = this.bodies[i];
+      world.removeBody(body);
     }
+    this.enabled = false;
+  }
+}
+Car.FinishLine = class{
+  body;
+  constructor(opts){
+    this.body = Physics.Body.generateBody(opts.body);
+  }
+  checkCar(car){
+    var cb = car.body.generateShape();
+    var s = this.body.generateShape();
+    var cbToS = cb.findAxisOfLeastPen(s);
+    var sToCb = s.findAxisOfLeastPen(cb);
+    if (Math.max(cbToS.penetration, sToCb.penetration) < 0){
+      return true;
+    }
+    return false;
+  }
+  checkCWorld(carWorld){
+    for (var i in carWorld.cars){
+      var car = carWorld.getCar(i);
+      if (this.checkCar(car)){
+        return i;
+      }
+    }
+    return -1;
   }
 }
 module.exports = {

@@ -19,6 +19,8 @@ io.on('connection', client => {
       staticBodies : staticBodies,
       cars : carWorld.cars,
       startBarriers : startBarriers,
+      finishLine : finishLine,
+      state : state,
       particles : carWorld.pWorld.particles,
       dt : dt,
       draftPeriod : draftPeriod,
@@ -61,9 +63,10 @@ var newParticlesIdx;
 var staticBodies = [];
 var world;
 var startBarriers;
+var finishLine;
 var state;//"wait", "countdown", "started", "ended"
 var timer;
-var COUNT_TIME = 15000;
+var COUNT_TIME = 10000;
 var END_TIME = 10000;
 var dt = .008;
 var draftPeriod = 5;
@@ -80,7 +83,7 @@ function startGame(){
   setInterval(step, 1000*dt);
 }
 function createObstacles(){
-  for (var i = 0; i < 300; i++){
+  for (var i = 0; i < 500; i++){
     var x = 20 * i;
     var boundary = new Physics.RectBody({
       length: 20, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 10)
@@ -98,10 +101,14 @@ function createObstacles(){
       })
     ]
   });
+  finishLine = new Car.FinishLine({body : new Physics.RectBody({
+    length: 1, width : 20, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(10000, 0)
+  })});
   world = new Physics.World();
   for (var i = 0; i < staticBodies.length; i++){
     world.addBody(staticBodies[i]);
   }
+  enableStartBarriers();
 }
 function step(){
   for (var i in carWorld.cars){
@@ -119,22 +126,91 @@ function step(){
     }
   }
   world.step(dt);
+  var stateChanged = updateState(dt);
+  if (stateChanged){
+    io.sockets.emit('newState', state);
+  }
   e++;
   if (e >= emitPeriod){
     e = 0;
     emitGameState();
   }
 }
-function updateState(){
-  if (carWorld.count = )
+function updateState(dt){
+  switch(state){
+    case "wait":
+      if (carWorld.count >= 2){
+        state = "countdown";
+        timer = COUNT_TIME;
+      }
+      return true;
+    case "countdown":
+      timer -= 1000 * dt;
+      if (carWorld.count < 2){
+        state = "wait";
+        timer = 0;
+        return true;
+      }
+      if (timer < 0){
+        state = "started";
+        timer = 0;
+        disableStartBarriers();
+        return true;
+      }
+      break;
+    case "started":
+      if (carWorld.count < 2){
+        state = "ended";
+        timer = END_TIME;
+        return true;
+      }
+      var winner = finishLine.checkCWorld(carWorld);
+      if (winner != -1){
+        state = "ended";
+        timer = END_TIME;
+        return true;
+      }
+      break;
+    case "ended":
+      timer -= 1000 * dt;
+      if (timer < 0){
+        if (carWorld.count < 2){
+          state = "wait";
+          timer = 0;
+        }
+        else{
+          state = "countdown";
+          timer = COUNT_TIME;
+        }
+        enableStartBarriers();
+        resetCars();
+        return true;
+      }
+      break;
+  }
+  return false;
+}
+function resetCars(){
+  for (var i in carWorld.cars){
+    var car = carWorld.getCar(i);
+    var body = car.body;
+    body.position = new Vector(0,0);
+    body.velocity = new Vector(0,0);
+    body.angle = 0;
+    body.angleVelocity = 0;
+  }
 }
 function enableStartBarriers(){
-  startBarriers.enable();
-  io.sockets.emit('startBarriersEnabled');
+  if (!startBarriers.enabled){
+    startBarriers.enable(world);
+    io.sockets.emit('startBarriersStateChange', true);
+  }
 }
 function disableStartBarriers(){
-  startBarriers.disable();
-  io.sockets.emit('startBarriersDisabled');
+  if (startBarriers.enabled){
+    startBarriers.disable(world);
+    io.sockets.emit('startBarriersStateChange', false);
+  }
 }
 function emitGameState(){
   io.sockets.emit('gameState', {time : Date.now(), cars : generatePState(), newParticles : getNewParticles(), d : d});

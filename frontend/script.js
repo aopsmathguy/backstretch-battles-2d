@@ -3,6 +3,8 @@ const socket = io('https://salty-chamber-63270.herokuapp.com/', { transports : [
 
 socket.on('startState', onStartState);
 socket.on('gameState', onGameState);
+socket.on('newState', onNewState);
+socket.on('startBarriersStateChange', onStartBarriersStateChange);
 socket.on('join', onJoin);
 socket.on('leave', onLeave);
 socket.on('pong', onPong);
@@ -10,8 +12,16 @@ socket.on('pong', onPong);
 var canvas = $e("canvas");
 var ctx = canvas.getContext("2d");
 var world;
+
 var staticBodies;
 var carWorld;
+var startBarriers;
+var finishLine;
+var state;//"wait", "countdown", "started", "ended"
+var timer;
+var COUNT_TIME;
+var END_TIME;
+
 var newParticlesIdx;
 var myId;
 var dt;
@@ -47,11 +57,19 @@ function onStartState(e){
   for (var i in carWorld.cars){
     world.addBody(carWorld.getCar(i).body);
   }
+  finishLine = new Car.FinishLine(e.finishLine);
+  startBarriers = new Car.BarrierWorld(e.startBarriers);
+  if (startBarriers.enabled){
+    for (var i = 0; i < startBarriers.bodies.length; i++){
+      var body = startBarriers.bodies[i];
+      world.addBody(body);
+    }
+  }
   dt = e.dt;
   draftPeriod = e.draftPeriod;
   d = e.d;
   timeDiff = Date.now() - e.serverTime;
-  console.log(timeDiff);
+  state = e.state;
   controlsQueue.start(dt);
   setInterval(()=>{
     socket.emit("ping", Date.now());
@@ -83,6 +101,16 @@ function onGameState(e){
     var idx = carWorld.pWorld.addParticle(new Car.Particle(particleToAdd));
   }
   d = e.d;
+}
+function onNewState(e){
+  state = e;
+}
+function onStartBarriersStateChange(e){
+  if (e){
+    startBarriers.enable(world);
+  } else{
+    startBarriers.disable(world);
+  }
 }
 function onJoin(e){
   var id = e.id;
