@@ -311,9 +311,11 @@ Car.Config = class{
 }
 Car.World = class {
   cars;
+  count;
   pWorld;
   constructor(){
     this.cars = {};
+    this.count = 0;
     this.pWorld = new Car.ParticleWorld();
   }
   getCar(id){
@@ -322,9 +324,11 @@ Car.World = class {
   addCar(opts){
     var id = opts.id;
     this.cars[id] = new Car(opts);
+    this.count ++;
   }
   removeCar(id){
     delete this.cars[id];
+    this.count --;
   }
   addCarParticles(){
     var out = [];
@@ -470,23 +474,33 @@ Car.ParticleWorld = class {
 Car.BarrierWorld = class{
   bodies;
   enabled;
-  constructor(b){
-    this.bodies = b;
-    this.enabled = false;
+  constructor(opts){
+    this.bodies = [];
+    if (this.bodies != undefined){
+      for (var i = 0; i < opts.bodies.length; i++){
+        var body = Physics.Body.generateBody(opts.bodies[i]);
+        this.bodies[i] = body;
+      }
+    }
+    this.enabled = opts.enabled || false;
   }
   enable(world){
-    for (var i = 0; i < this.bodies.length; i++){
-      var body = this.bodies[i];
-      world.addBody(body);
+    if (!this.enabled){
+      for (var i = 0; i < this.bodies.length; i++){
+        var body = this.bodies[i];
+        world.addBody(body);
+      }
+      this.enabled = true;
     }
-    this.enabled = true;
   }
   disable(world){
-    for (var i = 0; i < this.bodies.length; i++){
-      var body = this.bodies[i];
-      world.removeBody(body);
+    if (this.enabled){
+      for (var i = 0; i < this.bodies.length; i++){
+        var body = this.bodies[i];
+        world.removeBody(body);
+      }
+      this.enabled = false;
     }
-    this.enabled = false;
   }
 }
 module.exports = {
