@@ -142,8 +142,9 @@ function updateState(dt){
       if (carWorld.count >= 2){
         state = "countdown";
         timer = COUNT_TIME;
+        return true;
       }
-      return true;
+      break;
     case "countdown":
       timer -= 1000 * dt;
       if (carWorld.count < 2){
