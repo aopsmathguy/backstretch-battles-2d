@@ -40,7 +40,7 @@ var Car = class {
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(
       1 - Math.min(body.velocity.magnitude(),63)/70
       , -1, 1): 1);
-    var turnRate = 40*Math.PI/180;
+    var turnRate = 60*Math.PI/180;
     if (controls.keys["ArrowLeft"]){
       this.steerAngle -= dt * turnRate;
     } else if (controls.keys["ArrowRight"]){
@@ -507,6 +507,9 @@ Car.FinishLine = class{
   body;
   constructor(opts){
     this.body = Physics.Body.generateBody(opts.body);
+  }
+  display(ctx){
+    this.body.display(ctx);
   }
   checkCar(car){
     var cb = car.body.generateShape();

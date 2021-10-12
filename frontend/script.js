@@ -156,8 +156,11 @@ function display(dt){
     var min = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
     var max = state.position.add(world.dimensionsInMeters().multiply(0.5));
 
-    ctx.lineWidth = 0.3;
-    ctx.fillStyle = "rgba(128,128,255,0)";
+    ctx.lineWidth = 0.2;
+    ctx.fillStyle = "rgba(255,0,255,0.5)";
+    ctx.strokeStyle = "#f0f";
+    finishLine.display(ctx);
+    ctx.fillStyle = "rgba(0,255,0,0.5)";
     ctx.strokeStyle = "#0f0";
     world.displayRectStatic(ctx, min, max, dt);
     ctx.fillStyle = "#fff";
