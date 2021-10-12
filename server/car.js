@@ -327,8 +327,9 @@ Car.World = class {
     this.count ++;
   }
   removeCar(id){
-    delete this.cars[id];
-    this.count --;
+    if (delete this.cars[id]){
+      this.count --;
+    }
   }
   addCarParticles(){
     var out = [];
