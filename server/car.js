@@ -323,13 +323,16 @@ Car.World = class {
   }
   addCar(opts){
     var id = opts.id;
+    if (!this.cars[id]){
+      this.count ++;
+    }
     this.cars[id] = new Car(opts);
-    this.count ++;
   }
   removeCar(id){
-    if (delete this.cars[id]){
+    if (this.cars[id]){
       this.count --;
     }
+    delete this.cars[id]
   }
   addCarParticles(){
     var out = [];

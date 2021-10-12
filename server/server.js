@@ -139,7 +139,6 @@ function step(){
 function updateState(dt){
   switch(state){
     case "wait":
-      console.log(carWorld.count);
       if (carWorld.count >= 2){
         state = "countdown";
         timer = COUNT_TIME;
