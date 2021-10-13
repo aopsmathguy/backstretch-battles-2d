@@ -85,12 +85,28 @@ function startGame(){
 function createObstacles(){
   for (var i = 0; i < 500; i++){
     var x = 20 * i;
-    var boundary = new Physics.RectBody({
-      length: 20, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 10)
+    
+    var x1 = x;
+    var x2 = x + 20;
+    var y1 = 30 * Math.sin(x1/200);
+    var y2 = 30 * Math.sin(x2/200);
+    var boundary = new Physics.PolyBody({
+      points : [
+        new Vector(x2,y2 + 1),
+        new Vector(x2,y2),
+        new Vector(x1,y1),
+        new Vector(x1,y1 + 1)
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 10)
     });
     staticBodies.push(boundary);
-    boundary = new Physics.RectBody({
-      length: 20, width : 1, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, -10)
+    
+    boundary = new Physics.PolyBody({
+      points : [
+        new Vector(x2,y2 + 1),
+        new Vector(x2,y2),
+        new Vector(x1,y1),
+        new Vector(x1,y1 + 1)
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, -10)
     });
     staticBodies.push(boundary);
   }
