@@ -78,7 +78,7 @@ function onStartState(e){
 }
 function onGameState(e){
   physicsTime = e.time;
-  for (var i in carWorld.cars){
+  for (var i in e.cars){
     var c = carWorld.getCar(i);
     var o = e.cars[i];
     c.gas = o.gas;
