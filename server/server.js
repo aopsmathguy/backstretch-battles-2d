@@ -89,7 +89,7 @@ function createObstacles(){
   staticBodies.push(new Physics.RectBody({
     length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(-10, shape(-10))
   }));
-  for (var i = 0; i < 500; i++){
+  for (var i = 0; i < 251; i++){
     var x = 20 * i;
     var x1 = x-10;
     var x2 = x+10;
@@ -123,7 +123,7 @@ function createObstacles(){
     ]
   });
   finishLine = new Car.FinishLine({body : new Physics.RectBody({
-    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(10000, shape(10000))
+    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(5000, shape(5000))
   })});
   world = new Physics.World();
   for (var i = 0; i < staticBodies.length; i++){
