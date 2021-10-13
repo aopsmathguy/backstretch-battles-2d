@@ -82,13 +82,16 @@ function startGame(){
   timer = 0;
   setInterval(step, 1000*dt);
 }
+function shape(x){
+  return 15 * Math.sin(x/120);
+}
 function createObstacles(){
   for (var i = 0; i < 500; i++){
     var x = 20 * i + 20;
     var x1 = x - 20;
     var x2 = x;
-    var y1 = 15 * Math.sin(x1/120);
-    var y2 = 15 * Math.sin(x2/120);
+    var y1 = shape(x1);
+    var y2 = shape(x2);
     var boundary = new Physics.PolyBody({
       points : [
         new Vector(10,y2 + 1),
@@ -101,10 +104,10 @@ function createObstacles(){
     
     boundary = new Physics.PolyBody({
       points : [
-        new Vector(10,y2 + 1),
         new Vector(10,y2),
-        new Vector(-10,y1),
-        new Vector(-10,y1 + 1)
+        new Vector(10,y2- 1),
+        new Vector(-10,y1 - 1),
+        new Vector(-10,y1)
       ], mass : Infinity, inertia: Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, -10)
     });
     staticBodies.push(boundary);
@@ -112,12 +115,12 @@ function createObstacles(){
   startBarriers = new Car.BarrierWorld({
     bodies : [
       new Physics.RectBody({
-        length: 1, width : 20, mass : Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(10, 0)
+        length: 1, width : 20, mass : Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(10, shape(10))
       })
     ]
   });
   finishLine = new Car.FinishLine({body : new Physics.RectBody({
-    length: 1, width : 20, mass : Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(10000, 20*Math.sin(10000/120))
+    length: 1, width : 20, mass : Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(10000, shape(10000))
   })});
   world = new Physics.World();
   for (var i = 0; i < staticBodies.length; i++){
