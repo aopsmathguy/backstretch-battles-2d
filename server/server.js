@@ -88,9 +88,9 @@ function shape(x){
 function createObstacles(){
   staticBodies.push(new Physics.RectBody({
     length: 1, width : 20, mass : Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(-10, shape(-10))
-  });
+  }));
   for (var i = 0; i < 500; i++){
-    var x = 20 * i + 20;
+    var x = 20 * i;
     var x1 = x-10;
     var x2 = x+10;
     var y1 = shape(x1);
