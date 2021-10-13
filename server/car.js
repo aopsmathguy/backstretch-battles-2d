@@ -192,8 +192,8 @@ var Car = class {
 //     }
     var wFAlongCar = this.netWheelForce.dot(carDir);
     var l = cfg.cgToFrontAxle + cfg.cgToBackAxle;
-    var fwWeight = -wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToFrontAxle/l;
-    var bwWeight = wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToBackAxle/l;
+    var fwWeight = -wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToBackAxle/l;
+    var bwWeight = wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToFrontAxle/l;
     var fwR = carDir.multiplyV(new Vector(cfg.cgToFrontAxle, 0));
     var bwR = (new Vector(-cfg.cgToBackAxle, 0)).multiplyV(carDir);
     var fwV = body.getVelocity(fwR);
