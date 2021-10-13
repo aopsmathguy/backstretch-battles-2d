@@ -95,7 +95,7 @@ function createObstacles(){
         new Vector(10,y2),
         new Vector(-10,y1),
         new Vector(-10,y1 + 1)
-      ], mass : Infinity, inertia: Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 10)
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 10)
     });
     staticBodies.push(boundary);
     
@@ -105,19 +105,19 @@ function createObstacles(){
         new Vector(10,y2),
         new Vector(-10,y1),
         new Vector(-10,y1 + 1)
-      ], mass : Infinity, inertia: Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, -10)
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, -10)
     });
     staticBodies.push(boundary);
   }
   startBarriers = new Car.BarrierWorld({
     bodies : [
       new Physics.RectBody({
-        length: 1, width : 20, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(10, 0)
+        length: 1, width : 20, mass : Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(10, 0)
       })
     ]
   });
   finishLine = new Car.FinishLine({body : new Physics.RectBody({
-    length: 1, width : 20, mass : Infinity, kFriction : 0.2, sFriction : 0.3, elasticity : 0.4, position : new Vector(10000, 0)
+    length: 1, width : 20, mass : Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(10000, 0)
   })});
   world = new Physics.World();
   for (var i = 0; i < staticBodies.length; i++){
