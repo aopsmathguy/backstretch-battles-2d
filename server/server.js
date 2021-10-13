@@ -84,10 +84,7 @@ function startGame(){
 }
 function createObstacles(){
   for (var i = 0; i < 500; i++){
-    var x = 20 * i;
-    
-    var x1 = x;
-    var x2 = x + 20;
+    var x = 20 * i + 20;
     var y1 = 30 * Math.sin(x1/100);
     var y2 = 30 * Math.sin(x2/100);
     var boundary = new Physics.PolyBody({
