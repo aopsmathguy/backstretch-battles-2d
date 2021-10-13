@@ -87,8 +87,8 @@ function createObstacles(){
     var x = 20 * i + 20;
     var x1 = x - 20;
     var x2 = x;
-    var y1 = 30 * Math.sin(x1/100);
-    var y2 = 30 * Math.sin(x2/100);
+    var y1 = 20 * Math.sin(x1/120);
+    var y2 = 20 * Math.sin(x2/120);
     var boundary = new Physics.PolyBody({
       points : [
         new Vector(10,y2 + 1),
@@ -117,7 +117,7 @@ function createObstacles(){
     ]
   });
   finishLine = new Car.FinishLine({body : new Physics.RectBody({
-    length: 1, width : 20, mass : Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(10000, 0)
+    length: 1, width : 20, mass : Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(10000, 20*Math.sin(10000/120))
   })});
   world = new Physics.World();
   for (var i = 0; i < staticBodies.length; i++){
