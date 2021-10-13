@@ -87,7 +87,7 @@ function shape(x){
 }
 function createObstacles(){
   staticBodies.push(new Physics.RectBody({
-    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.3, elasticity : 0.4, position : new Vector(-10, shape(-10))
+    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(-10, shape(-10))
   }));
   for (var i = 0; i < 500; i++){
     var x = 20 * i;
@@ -101,7 +101,7 @@ function createObstacles(){
         new Vector(x2,y2),
         new Vector(x1,y1),
         new Vector(x1,y1 + 1)
-      ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.3, elasticity : 0.4, position : new Vector(0, 10)
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(0, 10)
     });
     staticBodies.push(boundary);
     
@@ -111,19 +111,19 @@ function createObstacles(){
         new Vector(x2,y2- 1),
         new Vector(x1,y1 - 1),
         new Vector(x1,y1)
-      ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.3, elasticity : 0.4, position : new Vector(0, -10)
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(0, -10)
     });
     staticBodies.push(boundary);
   }
   startBarriers = new Car.BarrierWorld({
     bodies : [
       new Physics.RectBody({
-        length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.3, elasticity : 0.4, position : new Vector(10, shape(10))
+        length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(10, shape(10))
       })
     ]
   });
   finishLine = new Car.FinishLine({body : new Physics.RectBody({
-    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.3, elasticity : 0.4, position : new Vector(10000, shape(10000))
+    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(10000, shape(10000))
   })});
   world = new Physics.World();
   for (var i = 0; i < staticBodies.length; i++){
