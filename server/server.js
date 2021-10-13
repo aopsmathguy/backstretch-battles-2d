@@ -87,8 +87,8 @@ function createObstacles(){
     var x = 20 * i + 20;
     var x1 = x - 20;
     var x2 = x;
-    var y1 = 20 * Math.sin(x1/120);
-    var y2 = 20 * Math.sin(x2/120);
+    var y1 = 15 * Math.sin(x1/120);
+    var y2 = 15 * Math.sin(x2/120);
     var boundary = new Physics.PolyBody({
       points : [
         new Vector(10,y2 + 1),
