@@ -88,27 +88,27 @@ function shape(x){
 function createObstacles(){
   for (var i = 0; i < 500; i++){
     var x = 20 * i + 20;
-    var x1 = x - 20;
-    var x2 = x;
+    var x1 = x-10;
+    var x2 = x+10;
     var y1 = shape(x1);
     var y2 = shape(x2);
     var boundary = new Physics.PolyBody({
       points : [
-        new Vector(10,y2 + 1),
-        new Vector(10,y2),
-        new Vector(-10,y1),
-        new Vector(-10,y1 + 1)
-      ], mass : Infinity, inertia: Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, 10)
+        new Vector(x2,y2 + 1),
+        new Vector(x2,y2),
+        new Vector(x1,y1),
+        new Vector(x1,y1 + 1)
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(0, 10)
     });
     staticBodies.push(boundary);
     
     boundary = new Physics.PolyBody({
       points : [
-        new Vector(10,y2),
-        new Vector(10,y2- 1),
-        new Vector(-10,y1 - 1),
-        new Vector(-10,y1)
-      ], mass : Infinity, inertia: Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(x, -10)
+        new Vector(x2,y2),
+        new Vector(x2,y2- 1),
+        new Vector(x1,y1 - 1),
+        new Vector(x1,y1)
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.5, sFriction : 0.3, elasticity : 0.4, position : new Vector(0, -10)
     });
     staticBodies.push(boundary);
   }
