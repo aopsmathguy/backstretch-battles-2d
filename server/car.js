@@ -282,11 +282,11 @@ Car.Config = class{
     this.cgToFrontAxle = opts.cgToFrontAxle || 1.2;//m
     this.cgToBackAxle = opts.cgToBackAxle || 1.3;//m
     this.cgHeight = opts.cgHeight || 0.5;//m
-    this.maxTireGrip = opts.maxTireGrip || 3;//
+    this.maxTireGrip = opts.maxTireGrip || 1.5;//
     this.lockGrip = opts.lockGrip || 0.7;//
 
-    this.cornerStiffnessFront = opts.cornerStiffnessFront || 6.5;
-    this.cornerStiffnessBack = opts.cornerStiffnessBack || 6.9;
+    this.cornerStiffnessFront = opts.cornerStiffnessFront || 4.5;
+    this.cornerStiffnessBack = opts.cornerStiffnessBack || 4;
     this.enginePower = opts.enginePower || 500000;// watts
 
     this.brakeForce = opts.brakeForce || 12000;// newtons
@@ -531,6 +531,7 @@ Car.FinishLine = class{
     return -1;
   }
 }
+
 module.exports = {
   Car
 }
