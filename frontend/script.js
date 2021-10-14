@@ -153,8 +153,9 @@ function display(dt){
     ctx.save();
     var translate = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
     ctx.translate(-translate.x, -translate.y);
-    var min = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
-    var max = state.position.add(world.dimensionsInMeters().multiply(0.5));
+    ctx.rotate(state.angle);
+    var min = state.position.subtract(world.dimensionsInMeters().multiply(0.72));
+    var max = state.position.add(world.dimensionsInMeters().multiply(0.72));
 
     ctx.lineWidth = 0.2;
     ctx.fillStyle = "rgba(255,0,255,0.5)";
