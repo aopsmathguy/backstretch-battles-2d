@@ -152,9 +152,10 @@ function display(dt){
   world.transform(ctx, ()=> {
     ctx.save();
     var translate = state.position;
-    var halfDim = world.dimensionsInMeters().multiply(0.5);
-    ctx.translate(-halfDim.x, -halfDim.y);
-    ctx.rotate(-state.angle);
+    var dim = world.dimensionsInMeters();
+    var halfDim = new Vector(dim.x*1/4, dim.y/2);
+    ctx.translate(halfDim.x, halfDim.y);
+    //ctx.rotate( - state.angle);
     ctx.translate(-translate.x, -translate.y);
     var min = state.position.subtract(world.dimensionsInMeters().multiply(0.72));
     var max = state.position.add(world.dimensionsInMeters().multiply(0.72));

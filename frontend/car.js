@@ -195,8 +195,8 @@ var Car = class {
     var fwV = body.getVelocity(fwR);
     var bwV = body.getVelocity(bwR);
 
-    var tireGripFront = cfg.maxTireGrip;
-    var tireGripRear = cfg.maxTireGrip * (1.0 - (this.eBrake ? 0 : 1) * (1.0 - cfg.lockGrip)); //
+    var tireGripFront = cfg.maxTireGripFront;
+    var tireGripRear = cfg.maxTireGripBack * (1.0 - (this.eBrake ? 0 : 1) * (1.0 - cfg.lockGrip)); //
 
     var fwDir = body.angle + this.steerAngle;
     var fwSlipAng = fwV.ang() - fwDir;
@@ -240,7 +240,8 @@ Car.Config = class{
   cgToFrontAxle;
   cgToBackAxle;
   cgHeight;
-  maxTireGrip;
+  maxTireGripFront;
+  maxTireGripBack;
   engineForce;
   brakeForce;
   dragCoefficient;
@@ -278,11 +279,12 @@ Car.Config = class{
     this.cgToFrontAxle = opts.cgToFrontAxle || 1.2;//m
     this.cgToBackAxle = opts.cgToBackAxle || 1.3;//m
     this.cgHeight = opts.cgHeight || 0.5;//m
-    this.maxTireGrip = opts.maxTireGrip || 3;//
+    this.maxTireGripFront = opts.maxTireGripFront || 3;//
+    this.maxTireGripBack = opts.maxTireGripBack || 3.5;//
     this.lockGrip = opts.lockGrip || 0.7;//
 
-    this.cornerStiffnessFront = opts.cornerStiffnessFront || 7;
-    this.cornerStiffnessBack = opts.cornerStiffnessBack || 6;
+    this.cornerStiffnessFront = opts.cornerStiffnessFront || 6;
+    this.cornerStiffnessBack = opts.cornerStiffnessBack || 7;
     this.enginePower = opts.enginePower || 500000;// watts
 
     this.brakeForce = opts.brakeForce || 12000;// newtons
