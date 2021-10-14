@@ -151,9 +151,11 @@ function display(dt){
   var state = carWorld.getCar(myId).body.lerpedState(dt);
   world.transform(ctx, ()=> {
     ctx.save();
-    var translate = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
-    ctx.rotate(-state.angle);
+    var translate = state.position;
+    var halfDim = world.dimensionsInMeters().multiply(0.5);
     ctx.translate(-translate.x, -translate.y);
+    ctx.rotate(-state.angle);
+    ctx.translate(-halfDim.x, -halfDim.y);
     var min = state.position.subtract(world.dimensionsInMeters().multiply(0.72));
     var max = state.position.add(world.dimensionsInMeters().multiply(0.72));
 
