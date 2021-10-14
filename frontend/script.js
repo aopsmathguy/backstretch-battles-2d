@@ -152,8 +152,8 @@ function display(dt){
   world.transform(ctx, ()=> {
     ctx.save();
     var translate = state.position.subtract(world.dimensionsInMeters().multiply(0.5));
+    ctx.rotate(-state.angle);
     ctx.translate(-translate.x, -translate.y);
-    ctx.rotate(state.angle);
     var min = state.position.subtract(world.dimensionsInMeters().multiply(0.72));
     var max = state.position.add(world.dimensionsInMeters().multiply(0.72));
 
