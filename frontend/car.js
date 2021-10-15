@@ -22,7 +22,7 @@ var Car = class {
     this.brake = (opts.brake != undefined ? opts.brake : 0);
     this.eBrake = (opts.eBrake != undefined ? opts.eBrake : false);
     this.steerAngle = (opts.steerAngle != undefined ? opts.steerAngle : 0);
-    this.safeSteer = (opts.safeSteer != undefined ? opts.safeSteer : false);
+    this.safeSteer = (opts.safeSteer != undefined ? opts.safeSteer : true);
     this.netWheelForce = Vector.copy(opts.netWheelForce);
   }
   updateInputs(controls, dt){
@@ -45,7 +45,7 @@ var Car = class {
     this.eBrake = controls.keys[" "];
 
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(
-      1 - Math.min(body.velocity.magnitude(),63)/70
+      1 - Math.min(body.velocity.magnitude(),85)/100
       , -1, 1): 1);
     var turnRate = 60*Math.PI/180;
     if (controls.keys["ArrowLeft"]){
