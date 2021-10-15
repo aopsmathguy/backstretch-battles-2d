@@ -22,19 +22,30 @@ var Car = class {
     } else{
       this.body = new Physics.PolyBody({points : this.cfg.points, mass : this.cfg.mass, inertia : this.cfg.mass * this.cfg.inertiaScale, kFriction : 0.14, sFriction : 0.2, elasticity : 0.2});
     }
-    this.gas = (opts.gas != undefined ? opts.gas : false);
-    this.brake = (opts.brake != undefined ? opts.brake : false);
+    this.gas = (opts.gas != undefined ? opts.gas : 0);
+    this.brake = (opts.brake != undefined ? opts.brake : 0);
     this.eBrake = (opts.eBrake != undefined ? opts.eBrake : false);
     this.steerAngle = (opts.steerAngle != undefined ? opts.steerAngle : 0);
-    this.safeSteer = (opts.safeSteer != undefined ? opts.safeSteer : true);
+    this.safeSteer = (opts.safeSteer != undefined ? opts.safeSteer : false);
     this.netWheelForce = Vector.copy(opts.netWheelForce);
   }
   updateInputs(controls, dt){
     var cfg = this.cfg;
     var body = this.body;
 
-    this.gas = controls.keys["ArrowUp"];
-    this.brake = controls.keys["ArrowDown"];
+    if (controls.keys["ArrowUp"]){
+      this.gas+= 2 * dt;
+    } else{
+      this.gas -= 2*dt;
+    }
+    this.gas = MyMath.clamp(0, 1);
+
+    if (controls.keys["ArrowDown"]){
+      this.brake += 2 * dt;
+    } else{
+      this.brake -= 2*dt;
+    }
+    this.brake = MyMath.clamp(0, 1);
     this.eBrake = controls.keys[" "];
 
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(
@@ -216,8 +227,8 @@ var Car = class {
       rpm = 20;
     }
     engineForce = carDir.multiply(
-      (this.gas ? cfg.enginePower/Math.abs(rpm) : 0)
-      - (this.brake ? (carDir.dot(body.velocity) > 0 ? cfg.brakeForce : cfg.enginePower/Math.abs(rpm)) : 0)
+      this.gas * cfg.enginePower/Math.abs(rpm)
+      - this.brake * (carDir.dot(body.velocity) > 0 ? cfg.brakeForce : cfg.enginePower/Math.abs(rpm))
       - MyMath.sign(carDir.dot(body.velocity)) * (this.eBrake ? cfg.ebrakeForce : 0)
     );
     var dragForce = body.velocity.multiply(-cfg.dragCoefficient * f * body.velocity.magnitude());
