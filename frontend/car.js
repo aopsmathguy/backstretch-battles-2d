@@ -236,7 +236,9 @@ var Car = class {
     body.applyImpulse(fwForce.multiply(dt), fwR);
     body.applyImpulse(bwForce.multiply(dt), bwR);
     this.netWheelForce = engineForce.add(rollForce).add(fwForce).add(bwForce);
-
+  }
+  createStats(){
+    return new Car.Stats(this);
   }
 }
 Car.Config = class{
@@ -314,8 +316,57 @@ Car.Config = class{
         new Vector(0,0)
       ];
     }
-
     this.rollingResistance = opts.rollingResistance || 12.8;
+  }
+}
+Car.Stats = class{
+  speed;
+  throttle;
+  steerAngle;
+  brake;
+  eBrake;
+  constructor(car){
+    this.speed = car.body.velocity.magnitude();
+    this.throttle = car.gas;
+    this.brake = car.brake;
+    this.eBrake = car.eBrake;
+    this.steerAngle = car.steerAngle;
+  }
+  displaySpeed(){
+    var radius = 50;
+    var mphPerMps = 2.23694;
+    var maxSpeed = 200;//mph
+    var minAngle = -5*Math.PI/4;
+    var maxAngle = Math.PI/4;
+    var fraction = this.speed * mphPerMps/maxSpeed;
+    var angle = maxAngle * fraction + minAngle * (1 - fraction);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(radius, 0);
+    ctx.stroke();
+    ctx.restore();
+  }
+  displaySteeringWheel(ctx){
+    var radius = 50;
+    var steerRatio = 12;
+    ctx.save();
+    ctx.rotate(this.steerAngle * steerRatio);
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+    ctx.moveTo(radius, 0);
+    ctx.lineTo(-radius, 0);
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, radius);
+    ctx.stroke();
+    ctx.restore();
   }
 }
 Car.World = class {

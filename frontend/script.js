@@ -148,12 +148,13 @@ function frameStep(){
   display((sDispTime - physicsTime)/1000);
 }
 function display(dt){
-  var state = carWorld.getCar(myId).body.lerpedState(dt);
+  var myCar = carWorld.getCar(myId);
+  var state = myCar.body.lerpedState(dt);
   world.transform(ctx, ()=> {
     ctx.save();
     var translate = state.position;
     var dim = world.dimensionsInMeters();
-    var halfDim = new Vector(dim.x*1/4, dim.y/2);
+    var halfDim = new Vector(dim.x*1/3, dim.y/2);
     ctx.translate(halfDim.x, halfDim.y);
     //ctx.rotate( - state.angle);
     ctx.translate(-translate.x, -translate.y);
@@ -169,8 +170,8 @@ function display(dt){
     world.displayRectStatic(ctx, min, max, dt);
     ctx.fillStyle = "#fff";
     carWorld.pWorld.displayRect(ctx, min, max);
-    ctx.strokeStyle = "#f00";
-    carWorld.getCar(myId).displayDirection(ctx, dt);
+    // ctx.strokeStyle = "#f00";
+    // myCar.displayDirection(ctx, dt);
     for (var i in carWorld.cars){
       var c = carWorld.getCar(i);
       ctx.strokeStyle = "#fff";
@@ -180,8 +181,22 @@ function display(dt){
       ctx.fillStyle = (i == myId ? "rgba(0,255,255,0.5)" : "rgba(255,128,0,0.5)");
       c.displayBody(ctx, dt);
     }
+
     ctx.restore();
   });
+  var stats = myCar.createStats();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#fff";
+  ctx.save();
+  ctx.translate(innerWidth/2, innerHeight - 100);
+  stats.displaySteeringWheel(ctx);
+  ctx.restore();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#fff";
+  ctx.save();
+  ctx.translate(100, innerHeight - 100);
+  stats.displaySpeed(ctx);
+  ctx.restore();
 }
 function step(dt){
   carWorld.getCar(myId).updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
