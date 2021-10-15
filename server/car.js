@@ -34,18 +34,18 @@ var Car = class {
     var body = this.body;
 
     if (controls.keys["ArrowUp"]){
-      this.gas+= 2 * dt;
+      this.gas += 2 * dt;
     } else{
-      this.gas -= 2*dt;
+      this.gas -= 2 * dt;
     }
-    this.gas = MyMath.clamp(0, 1);
+    this.gas = MyMath.clamp(this.gas, 0, 1);
 
     if (controls.keys["ArrowDown"]){
       this.brake += 2 * dt;
     } else{
       this.brake -= 2*dt;
     }
-    this.brake = MyMath.clamp(0, 1);
+    this.brake = MyMath.clamp(this.brake, 0, 1);
     this.eBrake = controls.keys[" "];
 
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(

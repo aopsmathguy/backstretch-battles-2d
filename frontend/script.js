@@ -1,4 +1,4 @@
-const socket = io('https://io-car-game.herokuapp.com/', { transports : ['websocket'] });
+const socket = io('https://salty-chamber-63270.herokuapp.com/', { transports : ['websocket'] });
 // const socket = io('http://localhost:3000/', { transports : ['websocket'] });
 
 socket.on('startState', onStartState);
