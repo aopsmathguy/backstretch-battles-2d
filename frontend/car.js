@@ -29,41 +29,37 @@ var Car = class {
     var cfg = this.cfg;
     var body = this.body;
 
+    var gasTarget;
     if (controls.keys["ArrowUp"]){
-      this.gas += 2 * dt;
+      gasTarget = 1;
     } else{
-      this.gas -= 2 * dt;
+      gasTarget = 0;
     }
-    this.gas = MyMath.clamp(this.gas, 0, 1);
+    this.gas += (gasTarget - this.gas) * 5 * dt;
 
+    var brakeTarget;
     if (controls.keys["ArrowDown"]){
-      this.brake += 2 * dt;
+      brakeTarget = 1;
     } else{
-      this.brake -= 2*dt;
+      brakeTarget = 0;
     }
-    this.brake = MyMath.clamp(this.brake, 0, 1);
+    this.brake += (brakeTarget - this.brake) * 5 * dt;
     this.eBrake = controls.keys[" "];
 
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(
       1 - Math.min(body.velocity.magnitude(),85)/100
       , -1, 1): 1);
     var turnRate = 60*Math.PI/180;
+    var steerTarget;
     if (controls.keys["ArrowLeft"]){
-      this.steerAngle -= dt * turnRate;
+      steerTarget = -maxSteer;
     } else if (controls.keys["ArrowRight"]){
-      this.steerAngle += dt * turnRate;
+      steerTarget = maxSteer;
     }
     else{
-      if (this.steerAngle > 0){
-        this.steerAngle -= dt * turnRate/2;
-        this.steerAngle = Math.max(0, this.steerAngle);
-      }
-      else{
-        this.steerAngle += dt * turnRate/2;
-        this.steerAngle = Math.min(0, this.steerAngle);
-      }
+      steerTarget = 0;
     }
-    this.steerAngle = MyMath.clamp(this.steerAngle, -maxSteer, maxSteer);
+    this.steerAngle += (steerTarget - this.steerAngle) * turnRate * dt;
   }
   displayWheels(ctx, dt){
     dt = dt || 0;
