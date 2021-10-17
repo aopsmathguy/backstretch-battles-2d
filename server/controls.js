@@ -12,7 +12,7 @@ var UserControls = class{
     this.keys[key] = true;
   }
   keyUp(key){
-    this.keys[key] = false;
+    delete this.keys[key];
   }
   mouseDown(){
     this.mouse = true;

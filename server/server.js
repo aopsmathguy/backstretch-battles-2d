@@ -17,6 +17,7 @@ io.on('connection', client => {
     client.emit('startState', {
       id : client.id,
       staticBodies : staticBodies,
+      controls : controls,
       cars : carWorld.cars,
       startBarriers : startBarriers,
       finishLine : finishLine,
@@ -104,7 +105,7 @@ function createObstacles(){
       ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(0, 10)
     });
     staticBodies.push(boundary);
-    
+
     boundary = new Physics.PolyBody({
       points : [
         new Vector(x2,y2),
@@ -234,7 +235,7 @@ function disableStartBarriers(){
   }
 }
 function emitGameState(){
-  io.sockets.emit('gameState', {time : Date.now(), cars : generatePState(), newParticles : getNewParticles(), d : d});
+  io.sockets.emit('gameState', {time : Date.now(), controls : controls, cars : generatePState(), newParticles : getNewParticles(), d : d});
   newParticlesIdx = [];
 }
 function generatePState(){

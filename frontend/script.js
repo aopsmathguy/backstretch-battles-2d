@@ -15,6 +15,7 @@ var world;
 
 var staticBodies;
 var carWorld;
+var allControls;
 var startBarriers;
 var finishLine;
 var state;//"wait", "countdown", "started", "ended"
@@ -65,6 +66,12 @@ function onStartState(e){
       world.addBody(body);
     }
   }
+  allControls = {};
+  for (var i in e.controls){
+    if (i != myId){
+      allControls[i] = new UserControls(e.controls[i]);
+    }
+  }
   dt = e.dt;
   draftPeriod = e.draftPeriod;
   d = e.d;
@@ -90,6 +97,12 @@ function onGameState(e){
     c.body.velocity = Vector.copy(o.body.velocity);
     c.body.angle = o.body.angle;
     c.body.angleVelocity = o.body.angleVelocity;
+  }
+  allControls = {};
+  for (var i in e.controls){
+    if (i != myId){
+      allControls[i] = new UserControls(e.controls[i]);
+    }
   }
   for (var i = 0; i < newParticlesIdx.length; i++){
     var idx = newParticlesIdx[i];
@@ -199,7 +212,12 @@ function display(dt){
   ctx.restore();
 }
 function step(dt){
+  for (var i in allControls){
+    var c = allControls[i];
+    carWorld.getCar(i).updateInputs(c, dt);
+  }
   carWorld.getCar(myId).updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
+
   carWorld.step(dt);
   d++;
   if (d >= draftPeriod){

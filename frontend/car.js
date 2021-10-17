@@ -279,7 +279,7 @@ Car.Config = class{
       new Vector(2.16,0.33)
     ];
     this.mass = opts.mass || 1200;//kg
-    this.inertiaScale = opts.inertiaScale || 2;
+    this.inertiaScale = opts.inertiaScale || 1.5;
 
     this.maxSteer = opts.maxSteer || 0.5;
     this.halfFrontAxleLength = opts.halfFrontAxleLength || 0.8;
@@ -329,7 +329,7 @@ Car.Stats = class{
     this.steerAngle = car.steerAngle;
   }
   displaySpeed(){
-    var radius = 50;
+    var radius = 75;
     var mphPerMps = 2.23694;
     var maxSpeed = 200;//mph
     var minAngle = -5*Math.PI/4;
@@ -346,7 +346,7 @@ Car.Stats = class{
     ctx.rotate(angle);
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(radius, 0);
+    ctx.lineTo(0.5*radius, 0);
     ctx.stroke();
     ctx.restore();
   }
