@@ -283,7 +283,7 @@ Car.Config = class{
       new Vector(2.16,0.33)
     ];
     this.mass = opts.mass || 1200;//kg
-    this.inertiaScale = opts.inertiaScale || 1.87;
+    this.inertiaScale = opts.inertiaScale || 2;
 
     this.maxSteer = opts.maxSteer || 0.5;
     this.halfFrontAxleLength = opts.halfFrontAxleLength || 0.8;
