@@ -233,8 +233,6 @@ function step(dt){
   world.step(dt);
 }
 function clearCanvas(){
-  canvas.width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-  canvas.height = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-  changeResolution(canvas, window.devicePixelRatio);
+  setCanvas(canvas);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
