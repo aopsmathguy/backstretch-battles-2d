@@ -11,6 +11,9 @@ io.on('connection', client => {
   client.on('keyup', handleKeyup);
   client.on('ping', handlePing);
   function handleJoinGame(){
+    if (controls[client.id] || carWorld.getCar(client.id)){
+      return;
+    }
     controls[client.id] = new UserControls();
     carWorld.addCar({id : client.id});
     world.addBody(carWorld.getCar(client.id).body);

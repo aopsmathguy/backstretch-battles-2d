@@ -332,7 +332,7 @@ Car.Stats = class{
     this.steerAngle = 0;
   }
   update(car, dt){
-    this.speed += (dt/0.5 * (car.body.velocity.magnitude() - this.speed));
+    this.speed += (dt/0.25 * (car.body.velocity.magnitude() - this.speed));
     this.throttle = car.gas;
     this.brake = car.brake;
     this.eBrake = car.eBrake;
