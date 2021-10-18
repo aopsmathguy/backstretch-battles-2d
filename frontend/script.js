@@ -15,6 +15,7 @@ var world;
 
 var staticBodies;
 var carWorld;
+var stats;
 var allControls;
 var startBarriers;
 var finishLine;
@@ -37,6 +38,7 @@ function startGame(){
   world = new Physics.World();
   staticBodies = [];
   carWorld = new Car.World();
+  stats = new Car.Stats();
   newParticlesIdx = [];
   socket.emit('joinGame');
 }
@@ -160,9 +162,9 @@ function frameStep(){
   clearCanvas();
   display((sDispTime - physicsTime)/1000);
 }
-function display(dt){
+function display(timeDiff){
   var myCar = carWorld.getCar(myId);
-  var state = myCar.body.lerpedState(dt);
+  var state = myCar.body.lerpedState(timeDiff);
   world.transform(ctx, ()=> {
     ctx.save();
     var translate = state.position;
@@ -180,24 +182,23 @@ function display(dt){
     finishLine.display(ctx);
     ctx.fillStyle = "rgba(0,255,0,0.5)";
     ctx.strokeStyle = "#0f0";
-    world.displayRectStatic(ctx, min, max, dt);
+    world.displayRectStatic(ctx, min, max, timeDiff);
     ctx.fillStyle = "#fff";
     carWorld.pWorld.displayRect(ctx, min, max);
     // ctx.strokeStyle = "#f00";
-    // myCar.displayDirection(ctx, dt);
+    // myCar.displayDirection(ctx, timeDiff);
     for (var i in carWorld.cars){
       var c = carWorld.getCar(i);
       ctx.strokeStyle = "#fff";
       ctx.fillStyle = "#fff";
-      c.displayWheels(ctx, dt);
+      c.displayWheels(ctx, timeDiff);
       ctx.strokeStyle = (i == myId ? "#0ff" : "#f80");
       ctx.fillStyle = (i == myId ? "rgba(0,255,255,0.5)" : "rgba(255,128,0,0.5)");
-      c.displayBody(ctx, dt);
+      c.displayBody(ctx, timeDiff);
     }
 
     ctx.restore();
   });
-  var stats = myCar.createStats();
   ctx.lineWidth = 3;
   ctx.strokeStyle = "#fff";
   ctx.save();
@@ -219,6 +220,7 @@ function step(dt){
   carWorld.getCar(myId).updateInputs(controlsQueue.q.get(Math.min(Math.floor(ping /(1000*dt)), controlsQueue.q.size() - 1)), dt);
 
   carWorld.step(dt);
+  stats.update(carWorld.getCar(myId), dt);
   d++;
   if (d >= draftPeriod){
     d = 0;

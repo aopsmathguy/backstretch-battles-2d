@@ -237,9 +237,6 @@ var Car = class {
     body.applyImpulse(bwForce.multiply(dt), bwR);
     this.netWheelForce = engineForce.add(rollForce).add(fwForce).add(bwForce);
   }
-  createStats(){
-    return new Car.Stats(this);
-  }
 }
 Car.Config = class{
   points;
@@ -327,8 +324,15 @@ Car.Stats = class{
   steerAngle;
   brake;
   eBrake;
-  constructor(car){
-    this.speed = car.body.velocity.magnitude();
+  constructor(){
+    this.speed = 0;
+    this.throttle = 0;
+    this.brake = 0;
+    this.eBrake = 0;
+    this.steerAngle = 0;
+  }
+  update(car, dt){
+    this.speed += (dt/0.5 * (car.body.velocity.magnitude() - this.speed));
     this.throttle = car.gas;
     this.brake = car.brake;
     this.eBrake = car.eBrake;
@@ -340,26 +344,51 @@ Car.Stats = class{
     var maxSpeed = 200;//mph
     var minAngle = -5*Math.PI/4;
     var maxAngle = Math.PI/4;
+    var markCount = 10;
+    var markings = (maxAngle - minAngle)/markCount;
     var fraction = this.speed * mphPerMps/maxSpeed;
     var angle = maxAngle * fraction + minAngle * (1 - fraction);
     ctx.save();
+    ctx.strokeStyle = "#fff";
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.restore();
 
     ctx.save();
+    ctx.strokeStyle = "#f00";
     ctx.rotate(angle);
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(0.5*radius, 0);
+    ctx.lineTo(0.8*radius, 0);
     ctx.stroke();
     ctx.restore();
+    for (var i = 0; i <= markCount; i ++){
+      var ang = minAngle + i * markings;
+      var speed = Math.floor(maxSpeed * i/markCount);
+      var position = (new Vector(0.7*radius, 0)).rotate(ang);
+
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#fff";
+      ctx.translate(position.x, position.y);
+      ctx.fillText(speed, 0, 0);
+      ctx.restore();
+      ctx.save();
+      ctx.rotate(ang);
+      ctx.beginPath();
+      ctx.moveTo(radius, 0);
+      ctx.lineTo(0.85*radius, 0);
+      ctx.stroke();
+      ctx.restore();
+    }
   }
   displaySteeringWheel(ctx){
     var radius = 50;
     var steerRatio = 12;
     ctx.save();
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 10;
     ctx.rotate(this.steerAngle * steerRatio);
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
