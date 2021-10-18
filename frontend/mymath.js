@@ -16,6 +16,9 @@ MyMath.sign = function(a){
 MyMath.anglify = function(ang){
   return ((ang) % (2 * Math.PI) + 3 * Math.PI ) % (2 * Math.PI) - Math.PI;
 }
+MyMath.mod = function(a, b){
+    return ((a % b)+b)%b;
+}
 MyMath.lerp = function(p, v, f){
   return p + v * f;
 }
