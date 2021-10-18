@@ -353,14 +353,6 @@ Car.Stats = class{
     ctx.stroke();
     ctx.restore();
 
-    ctx.save();
-    ctx.strokeStyle = "#f00";
-    ctx.rotate(angle);
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0.8*radius, 0);
-    ctx.stroke();
-    ctx.restore();
     for (var i = 0; i <= markCount; i ++){
       var ang = minAngle + i * markings;
       var speed = Math.floor(maxSpeed * i/markCount);
@@ -381,6 +373,17 @@ Car.Stats = class{
       ctx.stroke();
       ctx.restore();
     }
+    ctx.save();
+    ctx.fillStyle = "#f00";
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, 0.04*radius);
+    ctx.lineTo(0, -0.04*radius);
+    ctx.lineTo(0.8*radius, -0.02*radius);
+    ctx.lineTo(0.8*radius, 0.02*radius);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
   }
   displaySteeringWheel(ctx){
     var radius = 50;
