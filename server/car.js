@@ -308,10 +308,8 @@ Car.Config = class{
       }
     } else{
       this.draftPoints = [
-        new Vector(0,-0.8),
-        new Vector(0,0.8),
-        new Vector(0,-0.4),
-        new Vector(0,0.4),
+        new Vector(0,-0.7),
+        new Vector(0,0.7),
         new Vector(0,0)
       ];
     }
@@ -430,7 +428,7 @@ Car.World = class {
     for (var i in this.cars){
       var c = this.cars[i];
       var cfg = c.cfg;
-      var mag = c.body.velocity.magnitude()**2/9000;
+      var mag = c.body.velocity.magnitude()**2/10000;
       for (var j = 0; j < cfg.draftPoints.length; j++){
         var pos = c.body.position.add(cfg.draftPoints[j].rotate(c.body.angle));
         var idx = this.pWorld.addParticle(new Car.Particle({ownerId : c.id, position : pos, strength : mag}));
@@ -458,7 +456,7 @@ Car.Particle = class {
     opts = opts || {};
     this.position = Vector.copy(opts.position);
     this.strength = opts.strength || 0;
-    this.decayTime = opts.decayTime || 5;
+    this.decayTime = opts.decayTime || 2;
     this.ownerId = opts.ownerId || 0;
   }
   display(ctx){
@@ -471,7 +469,7 @@ Car.Particle = class {
   }
   step(dt){
     this.strength *= 1 - dt/this.decayTime;
-    if (this.strength < 0.01){
+    if (this.strength < 0.02){
       return false;
     }
     return true;
