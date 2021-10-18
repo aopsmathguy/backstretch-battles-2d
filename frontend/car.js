@@ -364,6 +364,7 @@ Car.Stats = class{
 
       ctx.save();
       ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
       ctx.fillStyle = "#fff";
       ctx.translate(position.x, position.y);
       ctx.fillText(speed, 0, 0);
