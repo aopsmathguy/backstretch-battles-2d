@@ -84,7 +84,7 @@ function startGame(){
   setInterval(step, 1000*dt);
 }
 function shape(x){
-  return 20*Math.sin(x/4000) * Math.sin(x/100);
+  return 20*(Math.sin(x/180) + Math.sin(2*x/180)/1.5);
 }
 function createObstacles(){
   staticBodies.push(new Physics.RectBody({
