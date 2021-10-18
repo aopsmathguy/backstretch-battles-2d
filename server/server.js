@@ -75,7 +75,7 @@ var END_TIME = 10000;
 var dt = .008;
 var draftPeriod = 10;
 var d = 0;
-var emitPeriod = 16;
+var emitPeriod = 20;
 var e = 0;
 
 function startGame(){
