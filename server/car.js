@@ -377,11 +377,16 @@ Car.Stats = class{
     ctx.fillStyle = "#f00";
     ctx.rotate(angle);
     ctx.beginPath();
-    ctx.moveTo(0, 0.04*radius);
-    ctx.lineTo(0, -0.04*radius);
+    ctx.moveTo(-0.2*radius, 0.04*radius);
+    ctx.lineTo(-0.2*radius, -0.04*radius);
     ctx.lineTo(0.8*radius, -0.02*radius);
     ctx.lineTo(0.8*radius, 0.02*radius);
     ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    ctx.save();
+    ctx.fillStyle = "#f00";
+    ctx.arc(0, 0, 0.08*radius, 0, 2 * Math.PI);
     ctx.fill();
     ctx.restore();
   }
