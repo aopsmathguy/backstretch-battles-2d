@@ -86,8 +86,19 @@ function startGame(){
   timer = 0;
   setInterval(step, 1000*dt);
 }
+function makePath(vs, width){
+  var out = [];
+  for (var i = 0 ; i < vs.length; i++){
+    var v = vs[i];
+    var prev = vs[MyMath.mod(i - 1, vs.length)];
+    var next = vs[MyMath.mod(i + 1, vs.length)];
+    var prevN = v.subtract(prev).crossZ(1);
+    var nextN = v.subtract(next).crossZ(-1);
+    var 
+  }
+}
 function shape(x){
-  return 20*(Math.sin(x/180) + Math.sin(2*x/180)/1.5);
+    return 0;
 }
 function createObstacles(){
   staticBodies.push(new Physics.RectBody({
