@@ -132,7 +132,7 @@ function createObstacles(){
   for (var i = 0; i < markings; i++){
     radii.push(Math.random()*1600+700);
   }
-  for (var i = 0; i < 80; i++){
+  for (var i = 0; i < 160; i++){
     var newRadii = [];
     for (var j = 0; j < radii.length; j++){
       var radius = (radii[MyMath.mod((j - 1), radii.length)] + radii[(j + 1) % radii.length] + 2 * radii[j])/4;
