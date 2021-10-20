@@ -195,8 +195,8 @@ var Car = class {
 //     }
     var wFAlongCar = this.netWheelForce.dot(carDir);
     var l = cfg.cgToFrontAxle + cfg.cgToBackAxle;
-    var fwWeight = -wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToBackAxle/l;
-    var bwWeight = wFAlongCar * cfg.cgHeight/l + body.mass * gravity * cfg.cgToFrontAxle/l;
+    var fwWeight = -wFAlongCar * cfg.weightTransfer * cfg.cgHeight/l + body.mass * gravity * cfg.cgToBackAxle/l;
+    var bwWeight = wFAlongCar * cfg.weightTransfer * cfg.cgHeight/l + body.mass * gravity * cfg.cgToFrontAxle/l;
     var fwR = carDir.multiplyV(new Vector(cfg.cgToFrontAxle, 0));
     var bwR = (new Vector(-cfg.cgToBackAxle, 0)).multiplyV(carDir);
     var fwV = body.getVelocity(fwR);
@@ -284,7 +284,8 @@ Car.Config = class{
 
     this.cgToFrontAxle = opts.cgToFrontAxle || 1.2;//m
     this.cgToBackAxle = opts.cgToBackAxle || 1.3;//m
-    this.cgHeight = opts.cgHeight || 0.27;//m
+    this.cgHeight = opts.cgHeight || 0.4;//m
+    this.weightTransfer = opts.weightTransfer || 0.2;
     this.maxTireGripFront = opts.maxTireGripFront || 3;//
     this.maxTireGripBack = opts.maxTireGripBack || 3.5;//
     this.lockGrip = opts.lockGrip || 0.7;//
