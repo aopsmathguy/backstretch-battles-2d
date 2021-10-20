@@ -169,7 +169,7 @@ function display(timeDiff){
     ctx.save();
     var translate = state.position;
     var dim = world.dimensionsInMeters();
-    var halfDim = new Vector(dim.x*1/3, dim.y/2);
+    var halfDim = new Vector(dim.x/2, dim.y/2);
     ctx.translate(halfDim.x, halfDim.y);
     //ctx.rotate( - state.angle);
     ctx.translate(-translate.x, -translate.y);
