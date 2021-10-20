@@ -100,46 +100,61 @@ function makePath(vs, width){
 function shape(x){
     return 0;
 }
-function createObstacles(){
-  staticBodies.push(new Physics.RectBody({
-    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(-10, shape(-10))
-  }));
-  for (var i = 0; i < 501; i++){
-    var x = 20 * i;
-    var x1 = x-10;
-    var x2 = x+10;
-    var y1 = shape(x1);
-    var y2 = shape(x2);
-    var boundary = new Physics.PolyBody({
-      points : [
-        new Vector(x2,y2 + 1),
-        new Vector(x2,y2),
-        new Vector(x1,y1),
-        new Vector(x1,y1 + 1)
-      ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(0, 10)
-    });
-    staticBodies.push(boundary);
-
-    boundary = new Physics.PolyBody({
-      points : [
-        new Vector(x2,y2),
-        new Vector(x2,y2- 1),
-        new Vector(x1,y1 - 1),
-        new Vector(x1,y1)
-      ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(0, -10)
-    });
-    staticBodies.push(boundary);
+function createTrack(vs, width1, width2){
+  function calculateDisplacement(n1, n2){
+    return n2.subtract(n1).rCrossZ(1/(n1.cross(n2)));
   }
+  var out = [];
+  for (var i = 0; i < vs.length; i++){
+    var v1 = vs[i];
+    var v2 = vs[(i+1) % vs.length];
+    var v3 = vs[(i+2) % vs.length];
+    var v4 = vs[(i+3) % vs.length];
+    var n0 = v1.subtract(v2).rCrossZ(1).normalize();
+    var n1 = v2.subtract(v3).rCrossZ(1).normalize();
+    var n2 = v3.subtract(v4).rCrossZ(1).normalize();
+    var dx1 = calculateDisplacement(n0, n1);
+    var dx2 = calculateDisplacement(n1, n2);
+    out.push(new Physics.PolyBody({
+      points : [
+        v3.add(dx2.multiply(width2)),
+        v3.add(dx2.multiply(width1)),
+        v2.add(dx1.multiply(width1)),
+        v2.add(dx1.multiply(width2))
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(0, 0)
+    }));
+    out.push(new Physics.PolyBody({
+      points : [
+        v3.add(dx2.multiply(-width1)),
+        v3.add(dx2.multiply(-width2)),
+        v2.add(dx1.multiply(-width2)),
+        v2.add(dx1.multiply(-width1))
+      ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(0, 0)
+    }));
+  }
+  return out;
+}
+function createObstacles(){
+  staticBodies = createTrack([
+    new Vector(0,0),
+    new Vector(1600,0),
+    new Vector(1680,80),
+    new Vector(1680,1680)
+    new Vector(0,1680)
+  ])
+  staticBodies.push(new Physics.RectBody({
+    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(-10,0)
+  }));
 
   startBarriers = new Car.BarrierWorld({
     bodies : [
       new Physics.RectBody({
-        length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(10, shape(10))
+        length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(10, 0)
       })
     ]
   });
   finishLine = new Car.FinishLine({body : new Physics.RectBody({
-    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(10000, shape(10000))
+    length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(-20, 0)
   })});
   world = new Physics.World();
   for (var i = 0; i < staticBodies.length; i++){
