@@ -153,7 +153,7 @@ function createObstacles(){
   startBarriers = new Car.BarrierWorld({
     bodies : [
       new Physics.RectBody({
-        length: 1, width : 60, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : track[1];
+        length: 1, width : 60, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : track[1]
       })
     ]
   });
