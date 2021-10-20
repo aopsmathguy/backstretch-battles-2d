@@ -132,7 +132,7 @@ function createObstacles(){
   for (var i = 0; i < markings; i++){
     radii.push(Math.random()*800+1600);
   }
-  for (var i = 0; i < 16; i++){
+  for (var i = 0; i < 24; i++){
     var newRadii = [];
     for (var j = 0; j < radii.length; j++){
       var radius = (radii[MyMath.mod((j - 1), radii.length)] + radii[(j + 1) % radii.length] + 2 * radii[j])/4;
@@ -140,7 +140,7 @@ function createObstacles(){
     }
     radii = newRadii;
   }
-  var startPosition = (new Vector(radii[0],0)).rotate(2*Math.PI*0/radii.length);
+  var startPosition = (new Vector(radii[0],0)).rotate(2*Math.PI*0/radii.length - Math.PI/2);
   var track = [];
   for (var i = 0; i < radii.length; i++){
     track.push((new Vector(radii[i],0)).rotate(2*Math.PI*i/radii.length - Math.PI/2).subtract(startPosition));
