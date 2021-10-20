@@ -128,14 +128,14 @@ function createTrack(vs, width1, width2){
 }
 function createObstacles(){
   var radii = [];
-  var markings = 100;
+  var markings = 1000;
   for (var i = 0; i < markings; i++){
     radii.push(Math.random()*800+1600);
   }
-  for (var i = 0; i < 8; i++){
+  for (var i = 0; i < 16; i++){
     var newRadii = [];
     for (var j = 0; j < radii.length; j++){
-      var radius = (radii[j] + radii[(j + 1) % radii.length])/2;
+      var radius = (radii[MyMath.mod((j - 1), radii.length)] + radii[(j + 1) % radii.length] + 2 * radii[j])/4;
       newRadii.push(radius);
     }
     radii = newRadii;
@@ -143,7 +143,7 @@ function createObstacles(){
   var startPosition = (new Vector(radii[0],0)).rotate(2*Math.PI*0/radii.length);
   var track = [];
   for (var i = 0; i < radii.length; i++){
-    track.push((new Vector(radii[i],0)).rotate(2*Math.PI*i/radii.length).subtract(startPosition));
+    track.push((new Vector(radii[i],0)).rotate(2*Math.PI*i/radii.length - Math.PI/2).subtract(startPosition));
   }
   staticBodies = createTrack(track, 20, 21);
   staticBodies.push(new Physics.RectBody({
