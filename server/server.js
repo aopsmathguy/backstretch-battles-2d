@@ -91,6 +91,9 @@ function shape(x){
 }
 function createTrack(vs, width1, width2){
   function calculateDisplacement(n1, n2){
+    if (n1.cross(n2) == 0){
+      return n1;
+    }
     return n2.subtract(n1).rCrossZ(1/(n1.cross(n2)));
   }
   var out = [];
@@ -106,18 +109,18 @@ function createTrack(vs, width1, width2){
     var dx2 = calculateDisplacement(n1, n2);
     out.push(new Physics.PolyBody({
       points : [
-        v3.add(dx2.multiply(width2)),
-        v3.add(dx2.multiply(width1)),
-        v2.add(dx1.multiply(width1)),
-        v2.add(dx1.multiply(width2))
+        v3.add(dx2.multiply(width2/2)),
+        v3.add(dx2.multiply(width1/2)),
+        v2.add(dx1.multiply(width1/2)),
+        v2.add(dx1.multiply(width2/2))
       ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(0, 0)
     }));
     out.push(new Physics.PolyBody({
       points : [
-        v3.add(dx2.multiply(-width1)),
-        v3.add(dx2.multiply(-width2)),
-        v2.add(dx1.multiply(-width2)),
-        v2.add(dx1.multiply(-width1))
+        v3.add(dx2.multiply(-width1/2)),
+        v3.add(dx2.multiply(-width2/2)),
+        v2.add(dx1.multiply(-width2/2)),
+        v2.add(dx1.multiply(-width1/2))
       ], mass : Infinity, inertia: Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(0, 0)
     }));
   }
@@ -130,7 +133,7 @@ function createObstacles(){
     new Vector(1680,80),
     new Vector(1680,1680),
     new Vector(0,1680)
-  ], 40, 41);
+  ], 20, 21);
   staticBodies.push(new Physics.RectBody({
     length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(-10,0)
   }));
