@@ -289,12 +289,12 @@ Car.Config = class{
     this.cgToFrontAxle = opts.cgToFrontAxle || 1.2;//m
     this.cgToBackAxle = opts.cgToBackAxle || 1.3;//m
     this.cgHeight = opts.cgHeight || 0.27;//m
-    this.maxTireGripFront = opts.maxTireGripFront || 2;//
-    this.maxTireGripBack = opts.maxTireGripBack || 2.5;//
+    this.maxTireGripFront = opts.maxTireGripFront || 3;//
+    this.maxTireGripBack = opts.maxTireGripBack || 3.5;//
     this.lockGrip = opts.lockGrip || 0.7;//
 
-    this.cornerStiffnessFront = opts.cornerStiffnessFront || 4;
-    this.cornerStiffnessBack = opts.cornerStiffnessBack || 5;
+    this.cornerStiffnessFront = opts.cornerStiffnessFront || 6;
+    this.cornerStiffnessBack = opts.cornerStiffnessBack || 7;
     this.enginePower = opts.enginePower || 500000;// watts
 
     this.brakeForce = opts.brakeForce || 12000;// newtons

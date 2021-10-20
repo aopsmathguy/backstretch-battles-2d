@@ -130,7 +130,7 @@ function createObstacles(){
   var radii = [];
   var markings = 1000;
   for (var i = 0; i < markings; i++){
-    radii.push(Math.random()*800+1600);
+    radii.push(Math.random()*800+800);
   }
   for (var i = 0; i < 24; i++){
     var newRadii = [];
