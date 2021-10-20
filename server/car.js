@@ -288,7 +288,7 @@ Car.Config = class{
 
     this.cgToFrontAxle = opts.cgToFrontAxle || 1.2;//m
     this.cgToBackAxle = opts.cgToBackAxle || 1.3;//m
-    this.cgHeight = opts.cgHeight || 0.4;//m
+    this.cgHeight = opts.cgHeight || 0.27;//m
     this.weightTransfer = opts.weightTransfer || 0.2;
     this.maxTireGripFront = opts.maxTireGripFront || 3;//
     this.maxTireGripBack = opts.maxTireGripBack || 3.5;//
