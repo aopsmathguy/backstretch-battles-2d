@@ -286,8 +286,8 @@ Car.Config = class{
     this.halfFrontAxleLength = opts.halfFrontAxleLength || 0.8;
     this.halfBackAxleLength = opts.halfBackAxleLength || 0.8;
 
-    this.cgToFrontAxle = opts.cgToFrontAxle || 1.2;//m
-    this.cgToBackAxle = opts.cgToBackAxle || 1.3;//m
+    this.cgToFrontAxle = opts.cgToFrontAxle || 1.25;//m
+    this.cgToBackAxle = opts.cgToBackAxle || 1.25;//m
     this.cgHeight = opts.cgHeight || 0.27;//m
     this.weightTransfer = opts.weightTransfer || 0.2;
     this.maxTireGripFront = opts.maxTireGripFront || 3;//
