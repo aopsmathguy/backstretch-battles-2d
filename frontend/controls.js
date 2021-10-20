@@ -45,10 +45,10 @@ var UserControls = class{
     delete this.keys[key];
   }
   mouseDown(){
-    this.mouse = true;
+    this.mouseDown = true;
   }
   mouseUp(){
-    this.mouse = false;
+    this.mouseDown = false;
   }
   mouseMove(x,y){
     this.mouse.x = x;
@@ -84,17 +84,17 @@ window.addEventListener('keyup', function(e) {
     socket.emit('keyup', e.key);
   }
 });
-// const rect = canvas.getBoundingClientRect();
-// window.addEventListener('mousemove', function(e) {
-//   controls.mouse = new Vector(e.clientX - rect.left, e.clientY - rect.top);
-// });
-// window.addEventListener('mousedown', function(e) {
-//   if (e.button == 0) {
-//     controls.mouseDown = true;
-//   }
-// });
-// window.addEventListener('mouseup', function(e) {
-//   if (e.button == 0) {
-//     controls.mouseDown = false;
-//   }
-// });
+const rect = canvas.getBoundingClientRect();
+window.addEventListener('mousemove', function(e) {
+  controls.mouseMove((e.clientX - rect.left)/rect.width, (e.clientY - rect.top)/rect.height);
+});
+window.addEventListener('mousedown', function(e) {
+  if (e.button == 0){
+    controls.mouseDown = true;
+  }
+});
+window.addEventListener('mouseup', function(e) {
+  if (e.button == 0) {
+    controls.mouseDown = false;
+  }
+});

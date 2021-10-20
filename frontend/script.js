@@ -171,7 +171,7 @@ function display(timeDiff){
     var dim = world.dimensionsInMeters();
     var halfDim = new Vector(dim.x/2, 2 * dim.y/3);
     ctx.translate(halfDim.x, halfDim.y);
-    ctx.rotate(-Math.PI/2 - state.angle);
+    // ctx.rotate(-Math.PI/2 - state.angle);
     ctx.translate(-translate.x, -translate.y);
     var min = state.position.subtract(world.dimensionsInMeters().multiply(0.72));
     var max = state.position.add(world.dimensionsInMeters().multiply(0.72));
