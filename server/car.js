@@ -26,7 +26,7 @@ var Car = class {
     this.brake = (opts.brake != undefined ? opts.brake : 0);
     this.eBrake = (opts.eBrake != undefined ? opts.eBrake : false);
     this.steerAngle = (opts.steerAngle != undefined ? opts.steerAngle : 0);
-    this.safeSteer = (opts.safeSteer != undefined ? opts.safeSteer : true);
+    this.safeSteer = (opts.safeSteer != undefined ? opts.safeSteer : false);
     this.netWheelForce = Vector.copy(opts.netWheelForce);
   }
   updateInputs(controls, dt){

@@ -169,9 +169,9 @@ function display(timeDiff){
     ctx.save();
     var translate = state.position;
     var dim = world.dimensionsInMeters();
-    var halfDim = new Vector(dim.x/2, dim.y/2);
+    var halfDim = new Vector(dim.x/2, 2 * dim.y/3);
     ctx.translate(halfDim.x, halfDim.y);
-    //ctx.rotate( - state.angle);
+    ctx.rotate(-Math.PI/2 - state.angle);
     ctx.translate(-translate.x, -translate.y);
     var min = state.position.subtract(world.dimensionsInMeters().multiply(0.72));
     var max = state.position.add(world.dimensionsInMeters().multiply(0.72));
@@ -185,8 +185,8 @@ function display(timeDiff){
     world.displayRectStatic(ctx, min, max, timeDiff);
     ctx.fillStyle = "#fff";
     carWorld.pWorld.displayRect(ctx, min, max);
-    // ctx.strokeStyle = "#f00";
-    // myCar.displayDirection(ctx, timeDiff);
+    ctx.strokeStyle = "#f00";
+    myCar.displayDirection(ctx, timeDiff);
     for (var i in carWorld.cars){
       var c = carWorld.getCar(i);
       ctx.strokeStyle = "#fff";

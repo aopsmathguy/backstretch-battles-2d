@@ -22,7 +22,7 @@ var Car = class {
     this.brake = (opts.brake != undefined ? opts.brake : 0);
     this.eBrake = (opts.eBrake != undefined ? opts.eBrake : false);
     this.steerAngle = (opts.steerAngle != undefined ? opts.steerAngle : 0);
-    this.safeSteer = (opts.safeSteer != undefined ? opts.safeSteer : true);
+    this.safeSteer = (opts.safeSteer != undefined ? opts.safeSteer : false);
     this.netWheelForce = Vector.copy(opts.netWheelForce);
   }
   updateInputs(controls, dt){
@@ -282,9 +282,9 @@ Car.Config = class{
     this.halfFrontAxleLength = opts.halfFrontAxleLength || 0.8;
     this.halfBackAxleLength = opts.halfBackAxleLength || 0.8;
 
-    this.cgToFrontAxle = opts.cgToFrontAxle || 1.2;//m
-    this.cgToBackAxle = opts.cgToBackAxle || 1.3;//m
-    this.cgHeight = opts.cgHeight || 0.4;//m
+    this.cgToFrontAxle = opts.cgToFrontAxle || 1.25;//m
+    this.cgToBackAxle = opts.cgToBackAxle || 1.25;//m
+    this.cgHeight = opts.cgHeight || 0.27;//m
     this.weightTransfer = opts.weightTransfer || 0.2;
     this.maxTireGripFront = opts.maxTireGripFront || 3;//
     this.maxTireGripBack = opts.maxTireGripBack || 3.5;//
