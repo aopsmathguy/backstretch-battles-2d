@@ -128,9 +128,9 @@ function createObstacles(){
     new Vector(0,0),
     new Vector(1600,0),
     new Vector(1680,80),
-    new Vector(1680,1680)
+    new Vector(1680,1680),
     new Vector(0,1680)
-  ])
+  ], 40, 41);
   staticBodies.push(new Physics.RectBody({
     length: 1, width : 20, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : new Vector(-10,0)
   }));
