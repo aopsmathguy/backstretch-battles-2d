@@ -130,9 +130,9 @@ function createObstacles(){
   var radii = [];
   var markings = 1000;
   for (var i = 0; i < markings; i++){
-    radii.push(Math.random()*1600+1600);
+    radii.push(Math.random()*1600+800);
   }
-  for (var i = 0; i < 40; i++){
+  for (var i = 0; i < 50; i++){
     var newRadii = [];
     for (var j = 0; j < radii.length; j++){
       var radius = (radii[MyMath.mod((j - 1), radii.length)] + radii[(j + 1) % radii.length] + 2 * radii[j])/4;
