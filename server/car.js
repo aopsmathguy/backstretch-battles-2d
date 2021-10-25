@@ -51,7 +51,7 @@ var Car = class {
     this.eBrake = controls.keys[" "];
 
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(
-      1 - Math.min(body.velocity.magnitude(),60)/70
+      1 - Math.min(body.velocity.magnitude(),43)/50
       , -1, 1): 1);
     var turnRate = 120*Math.PI/180;
     var steerTarget;
@@ -289,7 +289,7 @@ Car.Config = class{
     this.cgToFrontAxle = opts.cgToFrontAxle || 1.25;//m
     this.cgToBackAxle = opts.cgToBackAxle || 1.25;//m
     this.cgHeight = opts.cgHeight || 0.27;//m
-    this.weightTransfer = opts.weightTransfer || 0.2;
+    this.weightTransfer = opts.weightTransfer || 1.08;
     this.maxTireGripFront = opts.maxTireGripFront || 3;//
     this.maxTireGripBack = opts.maxTireGripBack || 3.5;//
     this.lockGrip = opts.lockGrip || 0.7;//
