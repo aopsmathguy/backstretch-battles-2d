@@ -152,6 +152,7 @@ function createObstacles(){
     var angle = i * spacings/radius + Math.PI;
     track.push(center.add(radius.rotate(angle)));
   }
+  staticBodies = createTrack(track, 20,22);
   startBarriers = new Car.BarrierWorld({
     bodies : [
       new Physics.RectBody({
