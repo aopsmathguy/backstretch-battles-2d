@@ -94,7 +94,7 @@ function shape(x){
 function createTrack(vs, width1, width2){
   function calculateDisplacement(n1, n2){
     if (n1.cross(n2) == 0){
-      return n1;
+      return n1.multiply(-1);
     }
     return n2.subtract(n1).rCrossZ(1/(n1.cross(n2)));
   }
@@ -157,7 +157,7 @@ function createObstacles(){
   }
 
   staticBodies = createTrack(track, 20,22);
-  startPosition = new Vector(0, radius);
+  startPosition = new Vector(0, -radius);
   startBarriers = new Car.BarrierWorld({
     bodies : [
       new Physics.RectBody({
