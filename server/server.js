@@ -156,7 +156,7 @@ function createObstacles(){
     track.push(center.add(radiusV.rotate(angle)));
   }
 
-  staticBodies = createTrack(track, 20,22);
+  staticBodies = createTrack(track, 30,32);
   startPosition = new Vector(0, -radius);
   startBarriers = new Car.BarrierWorld({
     bodies : [
