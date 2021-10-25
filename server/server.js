@@ -130,8 +130,8 @@ function createTrack(vs, width1, width2){
 }
 function createObstacles(){
   var spacings = 20;
-  var length = 2000;
-  var radius = 500;
+  var length = 4000;
+  var radius = 1000;
   var width = 20;
   var track = [];
 
