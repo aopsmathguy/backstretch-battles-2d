@@ -137,9 +137,9 @@ function createObstacles(){
     track.push(new Vector(x, radius));
   }
   var center = new Vector(length, 0);
-  var radiusV = new Vector(0, radius);
+  var radiusV = new Vector(radius,0);
   for (var i = 0; i < radius* Math.PI/spacings; i++){
-    var angle = i * spacings/radius;
+    var angle = i * spacings/radius - Math.PI/2;
     track.push(center.add(radiusV.rotate(angle)));
   }
   for (var i = 0; i < length/spacings; i++){
@@ -147,9 +147,9 @@ function createObstacles(){
     track.push(new Vector(length - x, -radius));
   }
   center = new Vector(0, 0);
-  radiusV = new Vector(0, radius);
+  radiusV = new Vector(radius,0);
   for (var i = 0; i < radius* Math.PI/spacings; i++){
-    var angle = i * spacings/radius + Math.PI;
+    var angle = i * spacings/radius + Math.PI/2;
     track.push(center.add(radiusV.rotate(angle)));
   }
 
