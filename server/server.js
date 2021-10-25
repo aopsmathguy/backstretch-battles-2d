@@ -16,6 +16,7 @@ io.on('connection', client => {
     }
     controls[client.id] = new UserControls();
     carWorld.addCar({id : client.id});
+    carWorld.getCar(client.id).body.position = startPosition;
     world.addBody(carWorld.getCar(client.id).body);
     client.emit('startState', {
       id : client.id,
@@ -65,6 +66,7 @@ var controls = {};
 var carWorld;
 var newParticlesIdx;
 var staticBodies = [];
+var startPosition;
 var world;
 var startBarriers;
 var finishLine;
@@ -154,6 +156,7 @@ function createObstacles(){
   }
 
   staticBodies = createTrack(track, 20,22);
+  startPosition = new Vector(0, radius);
   startBarriers = new Car.BarrierWorld({
     bodies : [
       new Physics.RectBody({
@@ -254,7 +257,7 @@ function resetCars(){
   for (var i in carWorld.cars){
     var car = carWorld.getCar(i);
     var body = car.body;
-    body.position = new Vector(0,0);
+    body.position = startPosition;
     body.velocity = new Vector(0,0);
     body.angle = 0;
     body.angleVelocity = 0;
