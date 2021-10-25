@@ -134,9 +134,10 @@ function createObstacles(){
   var radius = 500;
   var width = 20;
   var track = [];
+  
   for (var i = 0; i < length/spacings; i++){
     var x = i * spacings;
-    track.push(new Vector(length - x, radius));
+    track.push(new Vector(x, -radius));
   }
   var center = new Vector(length, 0);
   var radiusV = new Vector(radius,0);
@@ -146,7 +147,7 @@ function createObstacles(){
   }
   for (var i = 0; i < length/spacings; i++){
     var x = i * spacings;
-    track.push(new Vector(x, -radius));
+    track.push(new Vector(length - x, radius));
   }
   center = new Vector(0, 0);
   radiusV = new Vector(radius,0);
