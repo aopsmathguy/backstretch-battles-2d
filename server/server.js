@@ -137,21 +137,22 @@ function createObstacles(){
     track.push(new Vector(x, radius));
   }
   var center = new Vector(length, 0);
-  var radius = new Vector(0, radius);
+  var radiusV = new Vector(0, radius);
   for (var i = 0; i < radius* Math.PI/spacings; i++){
     var angle = i * spacings/radius;
-    track.push(center.add(radius.rotate(angle)));
+    track.push(center.add(radiusV.rotate(angle)));
   }
   for (var i = 0; i < length/spacings; i++){
     var x = i * spacings;
     track.push(new Vector(length - x, -radius));
   }
   center = new Vector(0, 0);
-  var radius = new Vector(0, radius);
+  radiusV = new Vector(0, radius);
   for (var i = 0; i < radius* Math.PI/spacings; i++){
     var angle = i * spacings/radius + Math.PI;
-    track.push(center.add(radius.rotate(angle)));
+    track.push(center.add(radiusV.rotate(angle)));
   }
+
   staticBodies = createTrack(track, 20,22);
   startBarriers = new Car.BarrierWorld({
     bodies : [
