@@ -73,7 +73,7 @@ var timer;
 var COUNT_TIME = 10000;
 var END_TIME = 10000;
 var dt = .008;
-var draftPeriod = 5;
+var draftPeriod = 3;
 var d = 0;
 var emitPeriod = 20;
 var e = 0;
