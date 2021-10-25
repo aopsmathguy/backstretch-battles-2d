@@ -127,29 +127,31 @@ function createTrack(vs, width1, width2){
   return out;
 }
 function createObstacles(){
-  var radii = [];
-  var markings = 1000;
-  for (var i = 0; i < markings; i++){
-    radii.push(Math.random()*800+2000);
-  }
-  for (var i = 0; i < 240; i++){
-    var newRadii = [];
-    for (var j = 0; j < radii.length; j++){
-      var radius = (radii[MyMath.mod((j - 1), radii.length)] + radii[(j + 1) % radii.length] + 2 * radii[j])/4;
-      newRadii.push(radius);
-    }
-    radii = newRadii;
-  }
-  var startPosition = (new Vector(radii[0],0)).rotate(2*Math.PI*0/radii.length - Math.PI/2);
+  var spacings = 20;
+  var length = 2000;
+  var radius = 500;
+  var width = 20;
   var track = [];
-  for (var i = 0; i < radii.length; i++){
-    track.push((new Vector(radii[i],0)).rotate(2*Math.PI*i/radii.length - Math.PI/2).subtract(startPosition));
+  for (var i = 0; i < length/spacings; i++){
+    var x = i * spacings;
+    track.push(new Vector(x, radius));
   }
-  staticBodies = createTrack(track, 20, 21);
-  staticBodies.push(new Physics.RectBody({
-    length: 1, width : 60, mass : Infinity, kFriction : 0.3, sFriction : 0.4, elasticity : 0.4, position : track[track.length - 1]
-  }));
-
+  var center = new Vector(length, 0);
+  var radius = new Vector(0, radius);
+  for (var i = 0; i < radius* Math.PI/spacings; i++){
+    var angle = i * spacings/radius;
+    track.push(center.add(radius.rotate(angle)));
+  }
+  for (var i = 0; i < length/spacings; i++){
+    var x = i * spacings;
+    track.push(new Vector(length - x, -radius));
+  }
+  center = new Vector(0, 0);
+  var radius = new Vector(0, radius);
+  for (var i = 0; i < radius* Math.PI/spacings; i++){
+    var angle = i * spacings/radius + Math.PI;
+    track.push(center.add(radius.rotate(angle)));
+  }
   startBarriers = new Car.BarrierWorld({
     bodies : [
       new Physics.RectBody({
