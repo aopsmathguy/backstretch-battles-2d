@@ -136,6 +136,7 @@ function onJoin(e){
     return;
   }
   carWorld.addCar(e.car);
+  addCar(e.car);
   world.addBody(carWorld.getCar(id).body);
 }
 function onLeave(e){
