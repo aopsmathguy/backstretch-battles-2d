@@ -1,6 +1,5 @@
 const socket = io('https://salty-chamber-63270.herokuapp.com/', { transports : ['websocket'] });
 // const socket = io('http://localhost:3000/', { transports : ['websocket'] });
-
 socket.on('startState', onStartState);
 socket.on('gameState', onGameState);
 socket.on('newState', onNewState);
@@ -83,6 +82,10 @@ function onStartState(e){
   setInterval(()=>{
     socket.emit("ping", Date.now());
   }, 500);
+  initScene(canvas, staticBodies, finishLine);
+  for (var i in e.cars){
+    addCar(e.cars[i]);
+  }
   frameStep();
 }
 function onGameState(e){
@@ -144,6 +147,7 @@ function onLeave(e){
     world.removeBody(carWorld.getCar(id).body);
   }
   carWorld.removeCar(id);
+  removeCar(id);
 }
 function onPong(e){
   var t = Date.now();
@@ -160,7 +164,12 @@ function frameStep(){
     physicsTime += dt*1000;
   }
   clearCanvas();
-  display((sDispTime - physicsTime)/1000);
+  var lerpTime = (sDispTime - physicsTime)/1000;
+  display(lerpTime);
+  var camState = carWorld.getCar(myId).body.lerpedState(lerpTime);
+  updateCamera(camState.position.subtract((new Vector(15,0)).rotate(camState.angle)), camState.angle);
+  setCarPositions(carWorld, lerpTime);
+  render();
 }
 function display(timeDiff){
   var myCar = carWorld.getCar(myId);
