@@ -177,40 +177,40 @@ function frameStep(){
 function display(timeDiff){
   var myCar = carWorld.getCar(myId);
   var state = myCar.body.lerpedState(timeDiff);
-  world.transform(ctx, ()=> {
-    ctx.save();
-    var translate = state.position;
-    var dim = world.dimensionsInMeters();
-    var halfDim = new Vector(dim.x/2, dim.y/2);
-    ctx.translate(halfDim.x, halfDim.y);
-    // ctx.rotate(-Math.PI/2 - state.angle);
-    ctx.translate(-translate.x, -translate.y);
-    var min = state.position.subtract(world.dimensionsInMeters().multiply(0.72));
-    var max = state.position.add(world.dimensionsInMeters().multiply(0.72));
+  // world.transform(ctx, ()=> {
+  //   ctx.save();
+  //   var translate = state.position;
+  //   var dim = world.dimensionsInMeters();
+  //   var halfDim = new Vector(dim.x/2, dim.y/2);
+  //   ctx.translate(halfDim.x, halfDim.y);
+  //   // ctx.rotate(-Math.PI/2 - state.angle);
+  //   ctx.translate(-translate.x, -translate.y);
+  //   var min = state.position.subtract(world.dimensionsInMeters().multiply(0.72));
+  //   var max = state.position.add(world.dimensionsInMeters().multiply(0.72));
 
-    ctx.lineWidth = 0.2;
-    ctx.fillStyle = "rgba(255,0,255,0.5)";
-    ctx.strokeStyle = "#f0f";
-    finishLine.display(ctx);
-    ctx.fillStyle = "rgba(0,255,0,0.5)";
-    ctx.strokeStyle = "#0f0";
-    world.displayRectStatic(ctx, min, max, timeDiff);
-    ctx.fillStyle = "#fff";
-    carWorld.pWorld.displayRect(ctx, min, max);
-    ctx.strokeStyle = "#f00";
-    myCar.displayDirection(ctx, timeDiff);
-    for (var i in carWorld.cars){
-      var c = carWorld.getCar(i);
-      ctx.strokeStyle = "#fff";
-      ctx.fillStyle = "#fff";
-      c.displayWheels(ctx, timeDiff);
-      ctx.strokeStyle = (i == myId ? "#0ff" : "#f80");
-      ctx.fillStyle = (i == myId ? "rgba(0,255,255,0.5)" : "rgba(255,128,0,0.5)");
-      c.displayBody(ctx, timeDiff);
-    }
+  //   ctx.lineWidth = 0.2;
+  //   ctx.fillStyle = "rgba(255,0,255,0.5)";
+  //   ctx.strokeStyle = "#f0f";
+  //   finishLine.display(ctx);
+  //   ctx.fillStyle = "rgba(0,255,0,0.5)";
+  //   ctx.strokeStyle = "#0f0";
+  //   world.displayRectStatic(ctx, min, max, timeDiff);
+  //   ctx.fillStyle = "#fff";
+  //   carWorld.pWorld.displayRect(ctx, min, max);
+  //   ctx.strokeStyle = "#f00";
+  //   myCar.displayDirection(ctx, timeDiff);
+  //   for (var i in carWorld.cars){
+  //     var c = carWorld.getCar(i);
+  //     ctx.strokeStyle = "#fff";
+  //     ctx.fillStyle = "#fff";
+  //     c.displayWheels(ctx, timeDiff);
+  //     ctx.strokeStyle = (i == myId ? "#0ff" : "#f80");
+  //     ctx.fillStyle = (i == myId ? "rgba(0,255,255,0.5)" : "rgba(255,128,0,0.5)");
+  //     c.displayBody(ctx, timeDiff);
+  //   }
 
-    ctx.restore();
-  });
+  //   ctx.restore();
+  // });
   ctx.lineWidth = 3;
   ctx.strokeStyle = "#fff";
   ctx.save();
