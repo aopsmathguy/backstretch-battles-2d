@@ -150,7 +150,7 @@ function sceneUpdateParticles(particleWorld){
 		var p = particleWorld.particles[i];
 		if (!p){
 			sceneRemoveParticle(i);
-			return;
+			continue;
 		}
 		var ob = sceneObjects.particles[i];
 		ob.material.opacity = p.strength;
