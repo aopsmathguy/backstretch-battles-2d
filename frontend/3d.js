@@ -55,14 +55,14 @@ function initScene(canvas, staticBodies, finishLine, startBarriers) {
 	sceneObjects.plane = plane;
 
 	for (var i = 0; i < staticBodies.length; i++){
-		var geometry = createPrismGeometry(staticBodies[i].points, 4);
+		var geometry = createPrismGeometry(staticBodies[i].points, 2);
 	    var material = new THREE.MeshLambertMaterial( { color: Math.floor(16777216 * Math.random()) });
     	var prism1 = new THREE.Mesh( geometry, material );
 		prism1.rotation.x = -Math.PI/2;
 		sceneObjects.staticBodies.push(prism1);
 	}
 	for (var i = 0; i < startBarriers.bodies.length; i++){
-		var geometry = createPrismGeometry(startBarriers.bodies[i].points, 4);
+		var geometry = createPrismGeometry(startBarriers.bodies[i].points, 2);
 	    var material = new THREE.MeshLambertMaterial( { color: Math.floor(16777216 * Math.random()) });
     	var prism1 = new THREE.Mesh( geometry, material );
 		prism1.rotation.x = -Math.PI/2;
@@ -72,7 +72,7 @@ function initScene(canvas, staticBodies, finishLine, startBarriers) {
 	if (startBarriers.enabled){
     	sceneAddBarriers();
 	}
-	var geometry = createPrismGeometry(finishLine.body.points, 4);
+	var geometry = createPrismGeometry(finishLine.body.points, 2);
     var material = new THREE.MeshLambertMaterial( { color: 0xe0e0e0, 
         transparent: true,
         opacity: 0.4});
