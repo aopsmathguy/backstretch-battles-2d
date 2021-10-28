@@ -93,10 +93,11 @@ function initScene(canvas, staticBodies, finishLine, startBarriers) {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
 	window.addEventListener( 'resize', onWindowResize );
+	renderer.setPixelRatio(window.devicePixelRatio);
 	canvas.parentElement.insertBefore(renderer.domElement, canvas);
 }
 function addCar(c){
-	var geometry = createPrismGeometry(c.body.points, 1.5);
+	var geometry = createPrismGeometry(c.body.points, 1);
     var material = new THREE.MeshLambertMaterial( { color: Math.floor(16777216 * Math.random()) });
     var prism1 = new THREE.Mesh( geometry, material );
     prism1.position.set(c.body.position.x, 0, c.body.position.y);
