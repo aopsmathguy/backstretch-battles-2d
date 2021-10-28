@@ -52,6 +52,7 @@ function onStartState(e){
   for (var i = 0; i < e.particles.length; i++){
     var p = e.particles[i];
     var idx = carWorld.pWorld.addParticle(new Car.Particle(p));
+    sceneAddParticle(idx, p);
   }
   for (var i = 0; i < staticBodies.length; i++){
     world.addBody(staticBodies[i]);
@@ -112,11 +113,13 @@ function onGameState(e){
   for (var i = 0; i < newParticlesIdx.length; i++){
     var idx = newParticlesIdx[i];
     carWorld.pWorld.removeParticle(idx);
+    sceneRemoveParticle(idx);
   }
   newParticlesIdx = [];
   for (var i = 0; i < e.newParticles.length; i++){
     var particleToAdd = e.newParticles[i];
     var idx = carWorld.pWorld.addParticle(new Car.Particle(particleToAdd));
+    sceneAddParticle(idx, particleToAdd);
   }
   d = e.d;
 }
@@ -170,7 +173,7 @@ function frameStep(){
   var lerpTime = (sDispTime - physicsTime)/1000;
   display(lerpTime);
   var camState = carWorld.getCar(myId).body.lerpedState(lerpTime);
-  updateCamera(camState.position.subtract((new Vector(5,0)).rotate(camState.angle)), camState.angle);
+  updateCamera(camState);
   setCarPositions(carWorld, lerpTime);
   render();
 }
@@ -240,9 +243,11 @@ function step(dt){
     for (var i = 0; i < addIdx.length; i++){
       var idx = addIdx[i];
       newParticlesIdx.push(idx);
+      sceneAddParticle(idx, carWorld.pWorld.particles[idx]);
     }
   }
   world.step(dt);
+  sceneUpdateParticles(carWorld.pWorld);
 }
 function clearCanvas(){
   setCanvas(canvas);

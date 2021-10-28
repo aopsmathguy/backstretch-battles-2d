@@ -37,12 +37,13 @@ function initScene(canvas, staticBodies, finishLine, startBarriers) {
 		plane : null,
 		staticBodies : [],
 		cars : {},
-		startBarriers : []
+		startBarriers : [],
+		particles : {}
 	};
-	const light = new THREE.AmbientLight( 0xa0a0a0 );
+	const light = new THREE.AmbientLight( 0xffffff,0.6);
 	sceneObjects.lights.push(light);
 
-	const pointLight1 = new THREE.PointLight( 0xffffff );
+	const pointLight1 = new THREE.PointLight( 0xffffff , 0.5);
 	pointLight1.position.set( 50000, 50000, 50000 );
 	sceneObjects.lights.push(pointLight1);
 
@@ -62,7 +63,7 @@ function initScene(canvas, staticBodies, finishLine, startBarriers) {
 		sceneObjects.staticBodies.push(prism1);
 	}
 	for (var i = 0; i < startBarriers.bodies.length; i++){
-		var geometry = createPrismGeometry(startBarriers.bodies[i].points, 2);
+		var geometry = createPrismGeometry(startBarriers.bodies[i].points, 0.1);
 	    var material = new THREE.MeshLambertMaterial( { color: Math.floor(16777216 * Math.random()) });
     	var prism1 = new THREE.Mesh( geometry, material );
 		prism1.rotation.x = -Math.PI/2;
@@ -72,10 +73,8 @@ function initScene(canvas, staticBodies, finishLine, startBarriers) {
 	if (startBarriers.enabled){
     	sceneAddBarriers();
 	}
-	var geometry = createPrismGeometry(finishLine.body.points, 2);
-    var material = new THREE.MeshLambertMaterial( { color: 0xe0e0e0, 
-        transparent: true,
-        opacity: 0.4});
+	var geometry = createPrismGeometry(finishLine.body.points, 0.1);
+    var material = new THREE.MeshLambertMaterial( { color: 0xff0000});
 	sceneObjects.finishLine =  new THREE.Mesh(geometry, material);
 	sceneObjects.finishLine.rotation.x = -Math.PI/2;
 	sceneObjects.finishLine.position.set(finishLine.body.position.x, 0 , finishLine.body.position.y);
@@ -130,7 +129,36 @@ function sceneRemoveBarriers(){
 		scene.remove(sceneObjects.startBarriers[i]);
 	}
 }
-function updateCamera(v,a){
+function sceneAddParticle(idx, p){
+	var geometry = new THREE.SphereGeometry(0.2);
+    var material = new THREE.MeshLambertMaterial( { color: 0xffffff,
+        transparent: true,
+        opacity: p.strength
+    });
+    var sphere = new THREE.Mesh( geometry, material );
+    sphere.position.set(p.position.x, 0, p.position.y);
+	sceneObjects.particles[idx] = sphere;
+	scene.add(sphere);
+}
+function sceneRemoveParticle(idx){
+	var ob = sceneObjects.particles[idx];
+	delete sceneObjects.particles[idx];
+	scene.remove(ob);
+}
+function sceneUpdateParticles(particleWorld){
+	for (var i in sceneObjects.particles){
+		var p = particleWorld.particles[i];
+		if (!p){
+			sceneRemoveParticle(i);
+			return;
+		}
+		var ob = sceneObjects.particles[i];
+		ob.material.opacity = p.strength;
+	}
+}
+function updateCamera(camState){
+  	v = camState.position.subtract((new Vector(5,0)).rotate(camState.angle));
+  	a = camState.angle;
 	camera.position.set(v.x, 4, v.y);
 	camera.rotation.order = "YXZ"
 	camera.rotation.y = -a - Math.PI/2;
