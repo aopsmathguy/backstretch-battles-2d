@@ -82,7 +82,7 @@ function onStartState(e){
   setInterval(()=>{
     socket.emit("ping", Date.now());
   }, 500);
-  initScene(canvas, staticBodies, finishLine);
+  initScene(canvas, staticBodies, finishLine, startBarriers);
   for (var i in e.cars){
     addCar(e.cars[i]);
   }
@@ -126,8 +126,10 @@ function onNewState(e){
 function onStartBarriersStateChange(e){
   if (e){
     startBarriers.enable(world);
+    sceneAddBarriers();
   } else{
     startBarriers.disable(world);
+    sceneRemoveBarriers();
   }
 }
 function onJoin(e){
@@ -168,7 +170,7 @@ function frameStep(){
   var lerpTime = (sDispTime - physicsTime)/1000;
   display(lerpTime);
   var camState = carWorld.getCar(myId).body.lerpedState(lerpTime);
-  updateCamera(camState.position.subtract((new Vector(15,0)).rotate(camState.angle)), camState.angle);
+  updateCamera(camState.position.subtract((new Vector(5,0)).rotate(camState.angle)), camState.angle);
   setCarPositions(carWorld, lerpTime);
   render();
 }
