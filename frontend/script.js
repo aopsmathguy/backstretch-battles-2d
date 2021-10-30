@@ -175,6 +175,7 @@ function frameStep(){
   var camState = carWorld.getCar(myId).body.lerpedState(lerpTime);
   updateCamera(camState);
   setCarPositions(carWorld, lerpTime);
+  sceneUpdateParticles(carWorld.pWorld);
   render();
 }
 function display(timeDiff){
@@ -247,7 +248,6 @@ function step(dt){
     }
   }
   world.step(dt);
-  sceneUpdateParticles(carWorld.pWorld);
 }
 function clearCanvas(){
   setCanvas(canvas);
