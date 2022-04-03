@@ -51,7 +51,7 @@ var Car = class {
     this.eBrake = controls.keys[" "];
 
     var maxSteer = cfg.maxSteer * (this.safeSteer ? MyMath.clamp(
-      1 - Math.min(body.velocity.magnitude(),72)/80
+      1 - Math.min(body.velocity.magnitude(),250)/280
       , -1, 1): 1);
     var turnRate = 120*Math.PI/180;
     var steerTarget;
@@ -223,7 +223,7 @@ var Car = class {
       rpm = 20;
     }
     engineForce = carDir.multiply(
-      this.gas * cfg.enginePower/Math.abs(rpm)
+      this.gas * cfg.engineForce
       - this.brake * (carDir.dot(body.velocity) > 0 ? cfg.brakeForce : cfg.enginePower/Math.abs(rpm))
       - MyMath.sign(carDir.dot(body.velocity)) * (this.eBrake ? cfg.ebrakeForce : 0)
     );
@@ -280,28 +280,28 @@ Car.Config = class{
       new Vector(2.16,0.33)
     ];
     this.mass = opts.mass || 1200;//kg
-    this.inertiaScale = opts.inertiaScale || 1.5;
+    this.inertiaScale = opts.inertiaScale || 1;
 
-    this.maxSteer = opts.maxSteer || 0.5;
+    this.maxSteer = opts.maxSteer || 0.6;
     this.halfFrontAxleLength = opts.halfFrontAxleLength || 0.8;
     this.halfBackAxleLength = opts.halfBackAxleLength || 0.8;
 
     this.cgToFrontAxle = opts.cgToFrontAxle || 1.25;//m
     this.cgToBackAxle = opts.cgToBackAxle || 1.25;//m
-    this.cgHeight = opts.cgHeight || 0.27;//m
-    this.weightTransfer = opts.weightTransfer || 1.08;
+    this.cgHeight = opts.cgHeight || 0.55;//m
+    this.weightTransfer = opts.weightTransfer || 0.2;
     this.maxTireGripFront = opts.maxTireGripFront || 3;//
     this.maxTireGripBack = opts.maxTireGripBack || 3.5;//
     this.lockGrip = opts.lockGrip || 0.7;//
 
-    this.cornerStiffnessFront = opts.cornerStiffnessFront || 6;
-    this.cornerStiffnessBack = opts.cornerStiffnessBack || 7;
-    this.enginePower = opts.enginePower || 500000;// watts
+    this.cornerStiffnessFront = opts.cornerStiffnessFront || 5;
+    this.cornerStiffnessBack = opts.cornerStiffnessBack || 5.2;
+    this.enginePower = opts.engineForce || 8000;// watts
 
     this.brakeForce = opts.brakeForce || 12000;// newtons
     this.ebrakeForce = opts.ebrakeForce || this.brakeForce / 2.5;
 
-    this.dragCoefficient = opts.dragCoefficient || 0.8;
+    this.dragCoefficient = opts.dragCoefficient || 2.5;
     if (this.draftPoints != undefined){
       this.draftPoints = [];
       for (var i = 0; i < opts.draftPoints.length; i++){
@@ -314,7 +314,7 @@ Car.Config = class{
         new Vector(0,0)
       ];
     }
-    this.rollingResistance = opts.rollingResistance || 12.8;
+    this.rollingResistance = opts.rollingResistance || 8;
   }
 }
 Car.Stats = class{
